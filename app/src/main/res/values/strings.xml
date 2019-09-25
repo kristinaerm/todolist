@@ -28,5 +28,6 @@
     <string name="enter_task_date">Enter date</string>
     <string name="enter_task_time">Enter time</string>
     <string name="enter_task_datetime">Enter date and time</string>
+    <string name="OK">OK</string>
 
 </resources>

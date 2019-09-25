@@ -1,16 +1,12 @@
 package com.example.todolist;
 
-import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.TimePickerDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +17,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,13 +51,31 @@ public class MainActivity extends AppCompatActivity {
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //m_Text = input.getText().toString();
+                        final Dialog datePickerDialog = new Dialog(th);
 
-                        Dialog dialogg = new Dialog(th);
+                        datePickerDialog.setContentView(R.layout.date_layout);
+                        datePickerDialog.setTitle(getString(R.string.enter_task_date));
+                        datePickerDialog.show();
+                        datePickerDialog.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                datePickerDialog.dismiss();
+                                final Dialog timePickerDialog = new Dialog(th);
 
-                        dialogg.setContentView(R.layout.datetimelayout);
-                        dialogg.setTitle(getString(R.string.enter_task_datetime));
-                        dialogg.show();
+                                timePickerDialog.setContentView(R.layout.time_layout);
+                                timePickerDialog.setTitle(getString(R.string.enter_task_time));
+                                timePickerDialog.show();
+                                timePickerDialog.findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        timePickerDialog.dismiss();
+                                        Toast toast = Toast.makeText(getApplicationContext(),
+                                                "Task will be added!", Toast.LENGTH_SHORT);
+                                        toast.show();
+                                    }
+                                });
+                            }
+                        });
 /*
                         //Ввод даты
 
