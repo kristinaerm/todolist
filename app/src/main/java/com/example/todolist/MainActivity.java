@@ -15,8 +15,11 @@ import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -28,38 +31,36 @@ public class MainActivity extends AppCompatActivity {
 
     private ActionBarDrawerToggle toggle;
     private LinkedList<Task> tasks = new LinkedList<>();
+    LinearLayout layout;
+    String description;
+    Date datetime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        layout = (LinearLayout)findViewById(R.id.linearCheckboxLayout);
+
         final AppCompatActivity th = this;
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                //Ввод текста задачи
-
-                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                //        .setAction("Action", null).show();
                 AlertDialog.Builder builder = new AlertDialog.Builder(th);
                 builder.setTitle(getString(R.string.enter_task));
 
-                // Set up the input
                 final EditText input = new EditText(th);
-                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 builder.setView(input);
 
-                // Set up the buttons
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast toast_show_description = Toast.makeText(getApplicationContext(),
                                 input.getText(), Toast.LENGTH_SHORT);
                         toast_show_description.show();
+                        description = input.getText().toString();
 
                         final View date_dialog_view = View.inflate(th, R.layout.date_layout, null);
                         final AlertDialog date_alert_dialog = new AlertDialog.Builder(th).create();
@@ -70,9 +71,9 @@ public class MainActivity extends AppCompatActivity {
 
                                 DatePicker datePicker = (DatePicker) date_dialog_view.findViewById(R.id.datePicker1);
                                 Toast toast_show_date = Toast.makeText(getApplicationContext(),
-                                        datePicker.getYear()+"-"+datePicker.getMonth()+"-"+datePicker.getDayOfMonth(), Toast.LENGTH_SHORT);
+                                        datePicker.getYear() + "-" + datePicker.getMonth() + "-" + datePicker.getDayOfMonth(), Toast.LENGTH_SHORT);
                                 toast_show_date.show();
-
+                                datetime = new Date(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
 
                                 final View time_dialog_view = View.inflate(th, R.layout.time_layout, null);
                                 final AlertDialog time_alert_dialog = new AlertDialog.Builder(th).create();
@@ -83,61 +84,36 @@ public class MainActivity extends AppCompatActivity {
 
                                         TimePicker timepicker = (TimePicker) time_dialog_view.findViewById(R.id.timePicker1);
                                         Toast toast_show_time = Toast.makeText(getApplicationContext(),
-                                                timepicker.getCurrentHour()+":"+timepicker.getCurrentMinute(), Toast.LENGTH_SHORT);
+                                                timepicker.getCurrentHour() + ":" + timepicker.getCurrentMinute(), Toast.LENGTH_SHORT);
                                         toast_show_time.show();
+                                        datetime = new Date(datetime.getYear(),datetime.getMonth(), datetime.getDay(), timepicker.getCurrentHour().intValue(), timepicker.getCurrentMinute().intValue());
+                                        final CheckBox checkbox = new CheckBox(th);
+                                        checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+                                            @Override
+                                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
+                                                if (isChecked){
+                                                    layout.removeView(buttonView);
+                                                    buttonView.setChecked(true);
+                                                    layout.addView(buttonView);
+                                                }
+                                            }
+                                        });
+                                        checkbox.setTextSize(20);
+                                        checkbox.setText(description+"\n"+datetime.getDate()+"."+datetime.getMonth()+"."+datetime.getYear()+" "+datetime.getHours()+":"+((datetime.getMinutes()>9)?(datetime.getMinutes()):("0"+datetime.getMinutes())));
+                                        //LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        layout.addView(checkbox, 0);
                                         time_alert_dialog.dismiss();
-                                    }});
+                                    }
+                                });
                                 time_alert_dialog.setView(time_dialog_view);
                                 time_alert_dialog.show();
 
                                 date_alert_dialog.dismiss();
 
-                            }});
-                        date_alert_dialog.setView(date_dialog_view);
-                        date_alert_dialog.show();
-
-                        /*
-                        final Dialog datePickerDialog = new Dialog(th);
-
-                        datePickerDialog.setContentView(R.layout.date_layout);
-                        datePickerDialog.setTitle(getString(R.string.enter_task_date));
-                        datePickerDialog.show();
-                        datePickerDialog.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                                DatePicker dp = (DatePicker) findViewById(R.id.datePicker1);
-                                int day = dp.getDayOfMonth();
-                                int month = dp.getMonth();
-                                int year = dp.getYear();
-
-                                Toast toast1 = Toast.makeText(getApplicationContext(),
-                                        dp.getDayOfMonth()+"-"+dp.getMonth()+"-"+dp.getYear(), Toast.LENGTH_SHORT);
-                                toast1.show();
-
-                                datePickerDialog.dismiss();
-                                final Dialog timePickerDialog = new Dialog(th);
-
-                                timePickerDialog.setContentView(R.layout.time_layout);
-                                timePickerDialog.setTitle(getString(R.string.enter_task_time));
-                                timePickerDialog.show();
-                                timePickerDialog.findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        TimePicker tp = (TimePicker) findViewById(R.id.timePicker1);
-                                        int getHour = tp.getCurrentHour();
-                                        int getMinute = tp.getCurrentMinute();
-                                        timePickerDialog.dismiss();
-                                        Toast toast2 = Toast.makeText(getApplicationContext(),
-                                                "Task will be added!", Toast.LENGTH_SHORT);
-                                        toast2.show();
-                                    }
-                                });
                             }
                         });
-                        */
-
-
+                        date_alert_dialog.setView(date_dialog_view);
+                        date_alert_dialog.show();
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -146,9 +122,7 @@ public class MainActivity extends AppCompatActivity {
                         dialog.cancel();
                     }
                 });
-
                 builder.show();
-
             }
         });
 
