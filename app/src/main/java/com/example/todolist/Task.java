@@ -1,5 +1,4 @@
 package com.example.todolist;
-
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
@@ -54,5 +53,4 @@ public class Task {
     public void setTimeDate(String timeDate) {
         this.timeDate = timeDate;
     }
-
 }
