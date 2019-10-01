@@ -23,6 +23,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -38,23 +40,25 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout layout;
     String description;
     Date datetime;
+    Category currentCategory;
+    AppCompatActivity th = new AppCompatActivity();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final AppCompatActivity th = this;
+        th = this;
 
-        Button btn = (Button)findViewById(R.id.btn);
-        btn.setOnClickListener(new View.OnClickListener(){
+        Button btn = (Button) findViewById(R.id.btn);
+        btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 Intent intent = new Intent(th, ChangeCategoryActivity.class);
                 startActivity(intent);
             }
         });
 
-        layout = (LinearLayout)findViewById(R.id.linearCheckboxLayout);
+        layout = (LinearLayout) findViewById(R.id.linearCheckboxLayout);
 
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -100,12 +104,13 @@ public class MainActivity extends AppCompatActivity {
                                         Toast toast_show_time = Toast.makeText(getApplicationContext(),
                                                 timepicker.getCurrentHour() + ":" + timepicker.getCurrentMinute(), Toast.LENGTH_SHORT);
                                         toast_show_time.show();
-                                        datetime = new Date(datetime.getYear(),datetime.getMonth(), datetime.getDay(), timepicker.getCurrentHour().intValue(), timepicker.getCurrentMinute().intValue());
+                                        datetime = new Date(datetime.getYear(), datetime.getMonth(), datetime.getDay(), timepicker.getCurrentHour().intValue(), timepicker.getCurrentMinute().intValue());
+                                        //tasks.add(new Task(description,datetime));
                                         final CheckBox checkbox = new CheckBox(th);
-                                        checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+                                        checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                             @Override
-                                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
-                                                if (isChecked){
+                                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                                if (isChecked) {
                                                     layout.removeView(buttonView);
                                                     buttonView.setChecked(true);
                                                     layout.addView(buttonView);
@@ -113,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         });
                                         checkbox.setTextSize(20);
-                                        checkbox.setText(description+"\n"+datetime.getDate()+"."+datetime.getMonth()+"."+datetime.getYear()+" "+datetime.getHours()+":"+((datetime.getMinutes()>9)?(datetime.getMinutes()):("0"+datetime.getMinutes())));
+                                        checkbox.setText(description + "\n" + datetime.getDate() + "." + datetime.getMonth() + "." + datetime.getYear() + " " + datetime.getHours() + ":" + ((datetime.getMinutes() > 9) ? (datetime.getMinutes()) : ("0" + datetime.getMinutes())));
                                         //LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                                         layout.addView(checkbox, 0);
                                         time_alert_dialog.dismiss();
@@ -152,11 +157,62 @@ public class MainActivity extends AppCompatActivity {
         toggle.setDrawerIndicatorEnabled(true);
         drawerLayout.setDrawerListener(toggle);
 
-        ListView lv_navigation_drawer = (ListView) findViewById(R.id.lv_navigation_drawer);
-        lv_navigation_drawer.setAdapter(new ArrayAdapter<String>(
-                this,
-                android.R.layout.simple_list_item_1,
-                new String[]{"Screen 1", "Screen 2", "Screen 3"}));
+        LinearLayout lv_navigation_drawer = (LinearLayout) findViewById(R.id.lv_navigation_drawer);
+        createDrawerContent(lv_navigation_drawer);
+    }
+
+    public void createDrawerContent(LinearLayout layout) {
+
+        Button allTasks = new Button(th);
+        allTasks.setText(R.string.all_tasks);
+        allTasks.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        allTasks.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+
+            }
+        });
+        layout.addView(allTasks);
+
+        TextView categories = new TextView(th);
+        categories.setText(R.string.categories);
+        layout.addView(categories);
+
+        Button change = new Button(th);
+        change.setText(R.string.change);
+        change.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        change.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+
+            }
+        });
+        layout.addView(change);
+
+        Button add = new Button(th);
+        add.setText(R.string.add_category);
+        add.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        add.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+
+            }
+        });
+        layout.addView(add);
+
+        TextView language = new TextView(th);
+        language.setText(R.string.language);
+        layout.addView(language);
+
+        Switch lang = new Switch(th);
+        lang.setTextOff("ENG");
+        lang.setTextOn("RU");
+        lang.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+            }
+        }
+        );
+        layout.addView(lang);
+
     }
 
     @Override

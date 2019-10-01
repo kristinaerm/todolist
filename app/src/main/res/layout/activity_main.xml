@@ -27,8 +27,9 @@
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-        <ListView
+        <LinearLayout
             android:id="@+id/lv_navigation_drawer"
+            android:orientation="vertical"
             android:layout_width="240dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
@@ -85,9 +86,16 @@
 
             <Button
                 android:id="@+id/btn"
+                style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
                 android:text="Button" />
+
+            <Switch
+                android:id="@+id/switch1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Switch" />
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>
 
