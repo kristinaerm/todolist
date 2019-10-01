@@ -65,7 +65,7 @@ public class ChangeCategoryActivity extends AppCompatActivity {
         System.out.println("Inserting ..");
         if (CheckConnection()) {
             //чтение всех элементов категории из firebase
-            //String idCat = f.writeNewCategory("Home1", R.drawable.clear, 919999);
+            String idCat = f.writeNewCategory("Home1", R.drawable.clear, 919999);
             mDatabase = FirebaseDatabase.getInstance().getReference("category:");
             mDatabase.addListenerForSingleValueEvent(valueEventListener);
         } else {
@@ -92,7 +92,7 @@ public class ChangeCategoryActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_done) {
-            Intent intent = new Intent(this, CategoryActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         }
         return true;
