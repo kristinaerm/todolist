@@ -1,39 +1,35 @@
 package com.example.todolist;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
+import android.view.View;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
-import com.google.firebase.database.core.view.Change;
 
 import java.util.Date;
 import java.util.LinkedList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainAndNavigation extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private ActionBarDrawerToggle toggle;
     private LinkedList<Task> tasks = new LinkedList<>();
@@ -46,22 +42,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_and_navigation);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         th = this;
+        layout = (LinearLayout) findViewById(R.id.linearLayoutMainNavigation);
 
-        Button btn = (Button) findViewById(R.id.btn);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(th, ChangeCategoryActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        layout = (LinearLayout) findViewById(R.id.linearCheckboxLayout);
-
-
-        FloatingActionButton fab = findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -145,95 +133,86 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        toggle = new ActionBarDrawerToggle(
-                this,
-                drawerLayout,
-                R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close);
-        toggle.setDrawerIndicatorEnabled(true);
-        drawerLayout.setDrawerListener(toggle);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
-        LinearLayout lv_navigation_drawer = (LinearLayout) findViewById(R.id.lv_navigation_drawer);
-        createDrawerContent(lv_navigation_drawer);
+
+
+
+
+        /*
+        Button btn = (Button) findViewById(R.id.btn);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(th, ChangeCategoryActivity.class);
+                startActivity(intent);
+            }
+        });
+        */
+
     }
 
-    public void createDrawerContent(LinearLayout layout) {
-
-        Button allTasks = new Button(th);
-        allTasks.setText(R.string.all_tasks);
-        allTasks.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        allTasks.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-
-            }
-        });
-        layout.addView(allTasks);
-
-        TextView categories = new TextView(th);
-        categories.setText(R.string.categories);
-        layout.addView(categories);
-
-        Button change = new Button(th);
-        change.setText(R.string.change);
-        change.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        change.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-
-            }
-        });
-        layout.addView(change);
-
-        Button add = new Button(th);
-        add.setText(R.string.add_category);
-        add.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        add.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-
-            }
-        });
-        layout.addView(add);
-
-        TextView language = new TextView(th);
-        language.setText(R.string.language);
-        layout.addView(language);
-
-        Switch lang = new Switch(th);
-        lang.setShowText(true);
-        //lang.setTrackDrawable(new SwitchTrackTextDrawable(th,R.string.english, R.string.russian));
-        lang.setTextOff("ENG");
-        lang.setTextOn("RU");
-        lang.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-            }
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
-        );
+    }
 
-        layout.addView(lang);
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main_and_navigation, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (toggle.onOptionsItemSelected(item))
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
             return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        toggle.syncState();
-    }
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        toggle.onConfigurationChanged(newConfig);
+        if (id == R.id.nav_camera) {
+            // Handle the camera action
+        } else if (id == R.id.nav_gallery) {
+
+        } else if (id == R.id.nav_slideshow) {
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }

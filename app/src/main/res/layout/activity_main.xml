@@ -18,23 +18,37 @@
         android:visibility="visible"
         tools:focusable="auto" />
 
-    <android.support.v4.widget.DrawerLayout
-        android:id="@+id/drawer_layout"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        app:layout_anchor="@+id/fab"
+        app:layout_anchorGravity="left|bottom">
 
-        <FrameLayout
-            android:id="@+id/container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
         <LinearLayout
-            android:id="@+id/lv_navigation_drawer"
+            android:id="@+id/linearCheckboxLayout"
+            android:layout_width="0dp"
+            android:layout_height="621dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
             android:orientation="vertical"
-            android:layout_width="240dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:background="@android:color/white" />
-    </android.support.v4.widget.DrawerLayout>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <Button
+                android:id="@+id/btn"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="115dp"
+                android:text="Button" />
+
+        </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
 
     <include layout="@layout/content_main" />
 
@@ -62,41 +76,22 @@
             android:textColor="@android:color/white" />
     </FrameLayout>
 
-    <android.support.constraint.ConstraintLayout
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_anchor="@+id/fab"
-        app:layout_anchorGravity="left|bottom">
+        android:layout_height="match_parent" >
 
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
         <LinearLayout
-            android:id="@+id/linearCheckboxLayout"
-            android:layout_width="0dp"
-            android:layout_height="621dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
+            android:id="@+id/lv_navigation_drawer"
             android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <Button
-                android:id="@+id/btn"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:text="Button" />
-
-            <Switch
-                android:id="@+id/switch1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Switch" />
-        </LinearLayout>
-    </android.support.constraint.ConstraintLayout>
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@android:color/white" />
+    </android.support.v4.widget.DrawerLayout>
 
 </android.support.design.widget.CoordinatorLayout>

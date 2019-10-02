@@ -16,9 +16,6 @@
     <string name="title_activity_category">CategoryActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Tasks</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
     <!-- Strings related to category -->
     <string name="all_tasks">All tasks</string>
@@ -33,6 +30,12 @@
     <string name="change">Change</string>
     <string name="add_category">Add</string>
     <string name="language">Language</string>
+    <string name="english">ENG</string>
+    <string name="russian">RU</string>
+    <string name="title_activity_main_and_navigation">MainAndNavigation</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
 
 
 </resources>

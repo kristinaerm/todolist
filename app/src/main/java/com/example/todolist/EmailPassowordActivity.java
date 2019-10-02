@@ -90,7 +90,7 @@ public class EmailPassowordActivity extends AppCompatActivity implements View.On
                 if (task.isSuccessful()) {
 
                     Toast.makeText(EmailPassowordActivity.this, "Авторизаци успешна", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(EmailPassowordActivity.this, MainActivity.class);
+                    Intent intent = new Intent(EmailPassowordActivity.this, MainAndNavigation.class);
                     intent.putExtra("idUser", user.getUid());//передаю в главное активити id пользователя который вошел
                     startActivity(intent);
 
