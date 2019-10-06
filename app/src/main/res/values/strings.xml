@@ -33,9 +33,12 @@
     <string name="english">ENG</string>
     <string name="russian">RU</string>
     <string name="title_activity_main_and_navigation">MainAndNavigation</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">ToDoList</string>
+    <string name="nav_header_subtitle">Your personal time manager</string>
     <string name="nav_header_desc">Navigation header</string>
-
+    <string name="expired">Expired</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="later">Later</string>
 
 </resources>

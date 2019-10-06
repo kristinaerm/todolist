@@ -25,6 +25,7 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -88,10 +89,11 @@ public class MainAndNavigation extends AppCompatActivity
                             public void onClick(View view) {
 
                                 DatePicker datePicker = (DatePicker) date_dialog_view.findViewById(R.id.datePicker1);
-                                Toast toast_show_date = Toast.makeText(getApplicationContext(),
-                                        datePicker.getYear() + "-" + datePicker.getMonth() + "-" + datePicker.getDayOfMonth(), Toast.LENGTH_SHORT);
-                                toast_show_date.show();
                                 datetime = new Date(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+
+                                Toast toast_show_date = Toast.makeText(getApplicationContext(),
+                                        datetime.getYear() + "-" + datetime.getMonth() + "-" + datetime.getDate(), Toast.LENGTH_SHORT);
+                                toast_show_date.show();
 
                                 final View time_dialog_view = View.inflate(th, R.layout.time_layout, null);
                                 final AlertDialog time_alert_dialog = new AlertDialog.Builder(th).create();
@@ -104,30 +106,16 @@ public class MainAndNavigation extends AppCompatActivity
                                         Toast toast_show_time = Toast.makeText(getApplicationContext(),
                                                 timepicker.getCurrentHour() + ":" + timepicker.getCurrentMinute(), Toast.LENGTH_SHORT);
                                         toast_show_time.show();
-                                        datetime = new Date(datetime.getYear(), datetime.getMonth(), datetime.getDay(), timepicker.getCurrentHour().intValue(), timepicker.getCurrentMinute().intValue());
-                                        //tasks.add(new Task(description,datetime));
-                                        final CheckBox checkbox = new CheckBox(th);
-                                        checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                                            @Override
-                                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                                if (isChecked) {
-                                                    //TODO: Add delete
-                                                    layout.removeView(buttonView);
-                                                    buttonView.setChecked(true);
-                                                    layout.addView(buttonView);
-                                                }
-                                            }
-                                        });
-                                        checkbox.setTextSize(20);
-                                        Task task = new Task(description, currentCategory.getIdCategory(), ((datetime.getDate() > 9) ? (datetime.getDate()) : ("0" + datetime.getDate())) + "." + ((datetime.getMonth() > 9) ? (datetime.getMonth()) : ("0" + datetime.getMonth())) + "." + datetime.getYear() + " " + ((datetime.getHours() > 9) ? (datetime.getHours()) : ("0" + datetime.getHours())) + ":" + ((datetime.getMinutes() > 9) ? (datetime.getMinutes()) : ("0" + datetime.getMinutes())));
-                                        checkbox.setText(task.toString());
-                                        //checkbox.setText(datetime.getDate() + "." + datetime.getMonth() + "." + datetime.getYear() + " " + ((datetime.getHours() > 9) ? (datetime.getHours()) : ("0" + datetime.getHours())) + ":" + ((datetime.getMinutes() > 9) ? (datetime.getMinutes()) : ("0" + datetime.getMinutes())));
+                                        datetime = new Date(datetime.getYear(), datetime.getMonth(), datetime.getDate(), timepicker.getCurrentHour().intValue(), timepicker.getCurrentMinute().intValue());
+                                        Toast toast_show_datetime = Toast.makeText(getApplicationContext(),
+                                                ((datetime.getDate() > 9) ? (datetime.getDate()) : ("0" + datetime.getDate())) + "." + ((datetime.getMonth() > 9) ? (datetime.getMonth()) : ("0" + datetime.getMonth())) + "." + datetime.getYear() + " " + ((datetime.getHours() > 9) ? (datetime.getHours()) : ("0" + datetime.getHours())) + ":" + ((datetime.getMinutes() > 9) ? (datetime.getMinutes()) : ("0" + datetime.getMinutes())), Toast.LENGTH_LONG);
+                                        toast_show_datetime.show();
+                                        Task task = new Task(description, currentCategory.getIdCategory(), ((datetime.getDate() > 9) ? (datetime.getDate()) : ("0" + datetime.getDate())) + "." + (((datetime.getMonth()+1) > 9) ? ((datetime.getMonth()+1)) : ("0" + (datetime.getMonth()+1))) + "." + datetime.getYear() + " " + ((datetime.getHours() > 9) ? (datetime.getHours()) : ("0" + datetime.getHours())) + ":" + ((datetime.getMinutes() > 9) ? (datetime.getMinutes()) : ("0" + datetime.getMinutes())));
                                         //TODO: add task in firebase and get id
                                         task.setIdTask(String.valueOf(index));
                                         tasks.add(task);
-                                        checkbox.setId(index);
                                         index++;
-                                        layout.addView(checkbox, 0);
+                                        sortAndShowTasks(layout);
                                         time_alert_dialog.dismiss();
                                     }
                                 });
@@ -178,32 +166,59 @@ public class MainAndNavigation extends AppCompatActivity
 
     }
 
-    public void sortAndShowTasks(){
-        layout.removeAllViews();
+    public void sortAndShowTasks(final LinearLayout linearLayout){
+        int previousState=0;
+        int currentState=0;
+        linearLayout.removeAllViews();
         try {
             tasks = Task.sort(tasks);
         } catch (ParseException e) {
             e.printStackTrace();
         }
         Task curr;
+        try {
+            previousState = tasks.get(0).timeline();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         for (int i=0; i<tasks.size(); i++){
             curr = tasks.get(i);
+            try {
+                currentState = tasks.get(i).timeline();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             CheckBox checkbox = new CheckBox(th);
             checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
                         //TODO: add task in firebase and get id
-                        layout.removeView(buttonView);
+                        linearLayout.removeView(buttonView);
                         buttonView.setChecked(true);
-                        layout.addView(buttonView);
+                        linearLayout.addView(buttonView);
                     }
                 }
             });
             checkbox.setTextSize(20);
             checkbox.setText(curr.toString());
             checkbox.setId(Integer.parseInt(curr.getIdTask()));
-            layout.addView(checkbox, 0);
+            if(previousState!=currentState){
+                TextView label = new TextView(th);
+                label.setText(previousState);
+                label.setTextSize(20);
+                layout.addView(label,0);
+                previousState=currentState;
+            }
+            linearLayout.addView(checkbox, 0);
+        }
+        try {
+            TextView label = new TextView(th);
+            label.setText(tasks.get(tasks.size()-1).timeline());
+            label.setTextSize(20);
+            layout.addView(label,0);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
 
@@ -233,6 +248,7 @@ public class MainAndNavigation extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            //TODO: Settings of language
             return true;
         }
 
