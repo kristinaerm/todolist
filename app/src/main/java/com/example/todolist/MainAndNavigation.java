@@ -2,6 +2,9 @@ package com.example.todolist;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -25,19 +28,21 @@ import android.widget.LinearLayout;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.LinkedList;
 
 public class MainAndNavigation extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private ActionBarDrawerToggle toggle;
     private LinkedList<Task> tasks = new LinkedList<>();
     LinearLayout layout;
     String description;
-    Date datetime;
-    Category currentCategory;
+    Date datetime = new Date();
     AppCompatActivity th = new AppCompatActivity();
+    //temporary
+    int index = 0;
+    Category currentCategory = new Category("1","1", R.drawable.add,"1");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +55,13 @@ public class MainAndNavigation extends AppCompatActivity
         layout = (LinearLayout) findViewById(R.id.linearLayoutMainNavigation);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        //turn drawable "+" black
+        Drawable myFabSrc = getResources().getDrawable(android.R.drawable.ic_input_add);
+        myFabSrc.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+        fab.setImageDrawable(myFabSrc);
+
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -99,6 +111,7 @@ public class MainAndNavigation extends AppCompatActivity
                                             @Override
                                             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                                                 if (isChecked) {
+                                                    //TODO: Add delete
                                                     layout.removeView(buttonView);
                                                     buttonView.setChecked(true);
                                                     layout.addView(buttonView);
@@ -106,8 +119,14 @@ public class MainAndNavigation extends AppCompatActivity
                                             }
                                         });
                                         checkbox.setTextSize(20);
-                                        checkbox.setText(description + "\n" + datetime.getDate() + "." + datetime.getMonth() + "." + datetime.getYear() + " " + datetime.getHours() + ":" + ((datetime.getMinutes() > 9) ? (datetime.getMinutes()) : ("0" + datetime.getMinutes())));
-                                        //LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        Task task = new Task(description, currentCategory.getIdCategory(), ((datetime.getDate() > 9) ? (datetime.getDate()) : ("0" + datetime.getDate())) + "." + ((datetime.getMonth() > 9) ? (datetime.getMonth()) : ("0" + datetime.getMonth())) + "." + datetime.getYear() + " " + ((datetime.getHours() > 9) ? (datetime.getHours()) : ("0" + datetime.getHours())) + ":" + ((datetime.getMinutes() > 9) ? (datetime.getMinutes()) : ("0" + datetime.getMinutes())));
+                                        checkbox.setText(task.toString());
+                                        //checkbox.setText(datetime.getDate() + "." + datetime.getMonth() + "." + datetime.getYear() + " " + ((datetime.getHours() > 9) ? (datetime.getHours()) : ("0" + datetime.getHours())) + ":" + ((datetime.getMinutes() > 9) ? (datetime.getMinutes()) : ("0" + datetime.getMinutes())));
+                                        //TODO: add task in firebase and get id
+                                        task.setIdTask(String.valueOf(index));
+                                        tasks.add(task);
+                                        checkbox.setId(index);
+                                        index++;
                                         layout.addView(checkbox, 0);
                                         time_alert_dialog.dismiss();
                                     }
@@ -157,6 +176,35 @@ public class MainAndNavigation extends AppCompatActivity
         });
         */
 
+    }
+
+    public void sortAndShowTasks(){
+        layout.removeAllViews();
+        try {
+            tasks = Task.sort(tasks);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Task curr;
+        for (int i=0; i<tasks.size(); i++){
+            curr = tasks.get(i);
+            CheckBox checkbox = new CheckBox(th);
+            checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
+                        //TODO: add task in firebase and get id
+                        layout.removeView(buttonView);
+                        buttonView.setChecked(true);
+                        layout.addView(buttonView);
+                    }
+                }
+            });
+            checkbox.setTextSize(20);
+            checkbox.setText(curr.toString());
+            checkbox.setId(Integer.parseInt(curr.getIdTask()));
+            layout.addView(checkbox, 0);
+        }
     }
 
     @Override

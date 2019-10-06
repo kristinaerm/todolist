@@ -1,6 +1,12 @@
 package com.example.todolist;
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
 @IgnoreExtraProperties
 public class Task {
     private String name;
@@ -9,6 +15,15 @@ public class Task {
     private String timeDate;
 
     public Task() {
+
+    }
+
+    public Task(String name, String idCategory, String timeDate) {
+
+        this.name = name;
+        this.idTask = idTask;
+        this.idCategory = idCategory;
+        this.timeDate = timeDate;
 
     }
 
@@ -53,4 +68,39 @@ public class Task {
     public void setTimeDate(String timeDate) {
         this.timeDate = timeDate;
     }
+
+    public String toString(){
+        return name +  "\n" + timeDate;
+    }
+
+    public int compare(Task task) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+        Date date1 = sdf.parse(timeDate);
+        Date date2 = sdf.parse(task.timeDate);
+        if (date2.after(date1)) {
+            return  -1;
+        } else if (date2.before(date1)){
+            return 1;
+        } else return 0;
+    }
+
+    public static LinkedList<Task> sort(LinkedList<Task> tasks) throws ParseException {
+        Task bucket;
+        if(tasks.size()<2)
+            return tasks;
+        for (int out = tasks.size() - 1; out >= 1; out--){  //Внешний цикл
+            for (int in = 0; in < out; in++){       //Внутренний цикл
+                if(tasks.get(in).compare(tasks.get(in+1))==1)               //Если порядок элементов нарушен
+                {
+                    bucket = tasks.get(in);
+                    tasks.remove(in);
+                    tasks.add(in+1,bucket);
+                }
+
+            }
+        }
+        return tasks;
+    }
+
+
 }

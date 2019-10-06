@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,6 +29,11 @@ public class EmailPassowordActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_email_passoword);
+
+        TextView email = (TextView) findViewById(R.id.et_email) ;
+        email.setText("glotova.polina@gmail.com");
+        TextView pass = (TextView) findViewById(R.id.et_password) ;
+        pass.setText("123456");
 
         mAuth = FirebaseAuth.getInstance();
 
