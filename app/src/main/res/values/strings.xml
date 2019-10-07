@@ -41,6 +41,6 @@
     <string name="language">Language</string>
     <string name="english">ENG</string>
     <string name="russian">RU</string>
-    <string name="no_category">Without category</string>
+    <string name="no_category">No category</string>
 
 </resources>

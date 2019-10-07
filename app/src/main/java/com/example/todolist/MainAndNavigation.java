@@ -58,6 +58,9 @@ public class MainAndNavigation extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //TODO REMOVE
+        categories.add(currentCategory);
+
         th = this;
         layout = (LinearLayout) findViewById(R.id.linearLayoutMainNavigation);
 
@@ -173,20 +176,19 @@ public class MainAndNavigation extends AppCompatActivity
     }
 
     public boolean onPrepareOptionsMenu (Menu menu){
-        /*
+
         Toast toast_inside_prepareOptionsMenu = Toast.makeText(getApplicationContext(),
-                "inside", Toast.LENGTH_SHORT);
-        toast_incide_prepareOptionsMenu.show();
-        */
-        //TODO: firebase upload categories
+                "inside "+subMenu.size(), Toast.LENGTH_SHORT);
+        toast_inside_prepareOptionsMenu.show();
+
         for (int i=0; i< categories.size(); i++){
             subMenu.removeItem(Integer.valueOf(categories.get(i).getIdCategory()));
         }
-        if (subMenu.size()<4){
+        //TODO: firebase upload categories
+        for (int i=0; i< categories.size(); i++){
             //TODO: clear except nocategory and add new categories
-            subMenu.add(R.id.nav_group_categories,0,Menu.NONE, getString(R.string.enter_task_time)).setIcon(getResources().getDrawable(R.drawable.label));
+            subMenu.add(R.id.nav_group_categories,Integer.parseInt(categories.get(i).getIdCategory()), Menu.NONE, categories.get(i).getName()).setIcon(getResources().getDrawable(R.drawable.label));
         }
-
 
         return true;
     }
@@ -292,12 +294,14 @@ public class MainAndNavigation extends AppCompatActivity
 
         } else if (id == R.id.nav_change_category) {
 
-        } else if (id == R.id.nav_change_category) {
-
-        }else if (id == 0) {
-            Toast toast_show_datetime = Toast.makeText(getApplicationContext(),
-                    "right", Toast.LENGTH_LONG);
-            toast_show_datetime.show();
+        } else {
+            int i=0;
+            while ((Integer.parseInt(categories.get(i).getIdCategory())!=id)&&(i<categories.size())){
+                i++;
+            }
+            if (i<categories.size()){
+                //TODO obrabotchik kategorii
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
