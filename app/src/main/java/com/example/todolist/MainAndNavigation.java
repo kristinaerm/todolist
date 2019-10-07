@@ -6,10 +6,14 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.constraint.Group;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
+import android.view.ActionProvider;
+import android.view.ContextMenu;
+import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -41,6 +45,7 @@ public class MainAndNavigation extends AppCompatActivity
     String description;
     Date datetime = new Date();
     AppCompatActivity th = new AppCompatActivity();
+    Menu menu;
     //temporary
     int index = 0;
     Category currentCategory = new Category("1","1", R.drawable.add,"1");
@@ -149,6 +154,9 @@ public class MainAndNavigation extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        menu = navigationView.getMenu();
+        menu.add(R.id.nav_group_categories,0,Menu.NONE, getString(R.string.enter_task_time)).setIcon(getResources().getDrawable(R.drawable.label));
+
 
 
 
@@ -164,6 +172,13 @@ public class MainAndNavigation extends AppCompatActivity
         });
         */
 
+    }
+
+    public boolean onPrepareOptionsMenu (Menu menu){
+        Toast toast_show_datetime = Toast.makeText(getApplicationContext(),
+                "inside", Toast.LENGTH_SHORT);
+        toast_show_datetime.show();
+        return true;
     }
 
     public void sortAndShowTasks(final LinearLayout linearLayout){
@@ -261,18 +276,18 @@ public class MainAndNavigation extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_all_tasks) {
+        //TODO: menu
+        } else if (id == R.id.nav_add_category) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_change_category) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_change_category) {
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        }else if (id == 0) {
+            Toast toast_show_datetime = Toast.makeText(getApplicationContext(),
+                    "right", Toast.LENGTH_LONG);
+            toast_show_datetime.show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
