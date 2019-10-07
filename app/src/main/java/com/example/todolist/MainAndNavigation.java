@@ -41,11 +41,12 @@ public class MainAndNavigation extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private LinkedList<Task> tasks = new LinkedList<>();
+    private LinkedList<Category> categories = new LinkedList<>();
     LinearLayout layout;
     String description;
     Date datetime = new Date();
     AppCompatActivity th = new AppCompatActivity();
-    Menu menu;
+    Menu subMenu;
     //temporary
     int index = 0;
     Category currentCategory = new Category("1","1", R.drawable.add,"1");
@@ -154,12 +155,9 @@ public class MainAndNavigation extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        menu = navigationView.getMenu();
-        menu.add(R.id.nav_group_categories,0,Menu.NONE, getString(R.string.enter_task_time)).setIcon(getResources().getDrawable(R.drawable.label));
-
-
-
-
+        Menu menu = navigationView.getMenu();
+        MenuItem category = menu.getItem(1);
+        subMenu = category.getSubMenu();
 
         /*
         Button btn = (Button) findViewById(R.id.btn);
@@ -175,9 +173,21 @@ public class MainAndNavigation extends AppCompatActivity
     }
 
     public boolean onPrepareOptionsMenu (Menu menu){
-        Toast toast_show_datetime = Toast.makeText(getApplicationContext(),
+        /*
+        Toast toast_inside_prepareOptionsMenu = Toast.makeText(getApplicationContext(),
                 "inside", Toast.LENGTH_SHORT);
-        toast_show_datetime.show();
+        toast_incide_prepareOptionsMenu.show();
+        */
+        //TODO: firebase upload categories
+        for (int i=0; i< categories.size(); i++){
+            subMenu.removeItem(Integer.valueOf(categories.get(i).getIdCategory()));
+        }
+        if (subMenu.size()<4){
+            //TODO: clear except nocategory and add new categories
+            subMenu.add(R.id.nav_group_categories,0,Menu.NONE, getString(R.string.enter_task_time)).setIcon(getResources().getDrawable(R.drawable.label));
+        }
+
+
         return true;
     }
 

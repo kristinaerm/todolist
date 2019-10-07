@@ -7,33 +7,32 @@
         android:id="@+id/nav_group_top"
         android:checkableBehavior="single">
         <item
-            android:orderInCategory="0"
             android:id="@+id/nav_all_tasks"
             android:icon="@drawable/folder"
+            android:orderInCategory="0"
             android:title="@string/all_tasks" />
     </group>
 
     <item
-        android:orderInCategory="0"
         android:id="@+id/nav_categories"
+        android:orderInCategory="0"
         android:title="@string/categories">
         <menu>
-            <group android:id="@+id/nav_group_categories">
-                <item
-                    android:id="@+id/nav_no_category"
-                    android:icon="@drawable/label"
-                    android:orderInCategory="1"
-                    android:title="@string/no_category" />
-            </group>
             <item
-                android:orderInCategory="2"
+                android:id="@+id/nav_no_category"
+                android:icon="@drawable/label"
+                android:orderInCategory="1"
+                android:title="@string/no_category" />
+            <group android:id="@+id/nav_group_categories"></group>
+            <item
                 android:id="@+id/nav_add_category"
                 android:icon="@drawable/add"
+                android:orderInCategory="2"
                 android:title="@string/add_category" />
             <item
-                android:orderInCategory="2"
                 android:id="@+id/nav_change_category"
                 android:icon="@drawable/change"
+                android:orderInCategory="3"
                 android:title="@string/change" />
         </menu>
     </item>
