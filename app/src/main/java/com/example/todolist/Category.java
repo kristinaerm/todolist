@@ -23,6 +23,7 @@ public class Category {
         this.idUser = idUser;
 
     }
+
     public Category(String name, Integer idIcon,  String idUser) {
 
         this.name = name;

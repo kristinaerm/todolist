@@ -13,6 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainAndNavigation"
+            android:label="@string/title_activity_main_and_navigation"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
         <activity android:name=".EmailPassowordActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,17 +25,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ChangeCategoryActivity"
-            android:label="@string/title_activity_category">
-
-        </activity>
         <activity
-            android:name=".MainActivity"
-            android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".LoginActivity"
-            android:label="@string/app_name"></activity>
+            android:name=".ChangeCategoryActivity"
+            android:label="@string/title_activity_category"></activity>
     </application>
 
 </manifest>
