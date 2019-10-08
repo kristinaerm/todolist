@@ -65,6 +65,15 @@ public class Database extends SQLiteOpenHelper {
         values.put("timeDate", task.getTimeDate());
 
         db.insert(TABLE_TASKS, null, values);
+
+        /*
+        final String MY_QUERY = "SELECT last_insert_rowid()";
+        Cursor cur = db.rawQuery(MY_QUERY, null);
+        cur.moveToFirst();
+        task.setIdTask(cur.getInt(0));
+        cur.close();
+        */
+
         db.close();
     }
 
@@ -122,9 +131,9 @@ public class Database extends SQLiteOpenHelper {
         return category;
     }
 
-    public List<Category> getCategorybyIdUser(String idUser) {
+    public LinkedList<Category> getCategorybyIdUser(String idUser) {
         SQLiteDatabase db = this.getReadableDatabase();
-        List<Category> categoryList=new LinkedList<>();
+        LinkedList<Category> categoryList=new LinkedList<>();
         Cursor cursor = db.query(TABLE_CATEGORY, new String[]{"idCategory",
                         "name", "idIcon", "idUser"}, "idUser" + "=?",
                 new String[]{String.valueOf(idUser)}, null, null, null, null);
@@ -175,8 +184,8 @@ public class Database extends SQLiteOpenHelper {
         return user;
     }
 
-    public List<Task> getAllTasks() {
-        List<Task> taskList = new ArrayList<Task>();
+    public LinkedList<Task> getAllTasks() {
+        LinkedList<Task> taskList = new LinkedList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_TASKS;
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -197,7 +206,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public List<Category> getAllCategorys() {
-        List<Category> categoryList = new ArrayList<Category>();
+        List<Category> categoryList = new LinkedList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_CATEGORY;
 
         SQLiteDatabase db = this.getWritableDatabase();

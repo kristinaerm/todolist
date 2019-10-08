@@ -40,6 +40,7 @@ public class EmailPassowordActivity extends AppCompatActivity implements View.On
                     // User is signed in
                     Intent intent = new Intent(EmailPassowordActivity.this, MainAndNavigation.class);
                     intent.putExtra("idUser", user.getUid());//передаю в главное активити id пользователя который вошел
+                    intent.putExtra("all", true);//передаю в главное активити хочу все таски
                     startActivity(intent);
 
                 } else {
@@ -127,6 +128,7 @@ public class EmailPassowordActivity extends AppCompatActivity implements View.On
                     Toast.makeText(EmailPassowordActivity.this, "Авторизаци успешна", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(EmailPassowordActivity.this, MainAndNavigation.class);
                     intent.putExtra("idUser", user.getUid());//передаю в главное активити id пользователя который вошел
+                    intent.putExtra("all", true);//передаю в главное активити хочу все таски
                     startActivity(intent);
 
 

@@ -78,7 +78,7 @@ public class ChangeCategoryActivity extends AppCompatActivity {
         System.out.println("Inserting ..");
         if (CheckConnection()) {
             //чтение всех элементов категории из firebase
-            // firebase.writeNewCategory("home2",R.drawable.done,idUser);
+            //firebase.writeNewCategory(getString(R.string.no_category), R.drawable.done, idUser);
             //  mDatabase.addListenerForSingleValueEvent(valueEventListener);
             Query query = FirebaseDatabase.getInstance().getReference("category:")
                     .orderByChild("idUser")

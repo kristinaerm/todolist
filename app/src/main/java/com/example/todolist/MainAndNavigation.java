@@ -6,14 +6,9 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.constraint.Group;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
-import android.view.ActionProvider;
-import android.view.ContextMenu;
-import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,7 +18,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -32,6 +26,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -48,9 +48,13 @@ public class MainAndNavigation extends AppCompatActivity
     AppCompatActivity th = new AppCompatActivity();
     Menu subMenu;
     String userId;
+    Firebase fire = new Firebase();
+    boolean all = true;
+    private Database db = new Database(this);
     //temporary
     int index = 0;
     Category currentCategory = new Category("1","1", R.drawable.add,"1");
+    String idCategory = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,13 +63,32 @@ public class MainAndNavigation extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         userId = getIntent().getStringExtra("idUser");
+        all = getIntent().getBooleanExtra("all", true);
 
         //TODO REMOVE
-        categories.add(currentCategory);
 
         th = this;
         layout = (LinearLayout) findViewById(R.id.linearLayoutMainNavigation);
+
+        //fire.writeNewCategory(getString(R.string.no_category), R.drawable.done, userId);
+        //db.addCategory(new Category(getString(R.string.no_category), R.drawable.done, userId));
+
+/*
+        Query query1 = FirebaseDatabase.getInstance().getReference("category:")
+                .orderByChild("idUser")
+                .equalTo(userId);
+        query1.addListenerForSingleValueEvent(valueEventListener);
+        */
+/*
+        Task task = new Task("123456789", "-LqgORdtQzaw4SCYUMM9", ((datetime.getDate() > 9) ? (datetime.getDate()) : ("0" + datetime.getDate())) + "." + (((datetime.getMonth()+1) > 9) ? ((datetime.getMonth()+1)) : ("0" + (datetime.getMonth()+1))) + "." + datetime.getYear() + " " + ((datetime.getHours() > 9) ? (datetime.getHours()) : ("0" + datetime.getHours())) + ":" + ((datetime.getMinutes() > 9) ? (datetime.getMinutes()) : ("0" + datetime.getMinutes())));
+        fire.writeNewTask(task);
+*/
+
+
+
+        sortAndShowTasks(layout);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
@@ -122,10 +145,14 @@ public class MainAndNavigation extends AppCompatActivity
                                         Toast toast_show_datetime = Toast.makeText(getApplicationContext(),
                                                 ((datetime.getDate() > 9) ? (datetime.getDate()) : ("0" + datetime.getDate())) + "." + ((datetime.getMonth() > 9) ? (datetime.getMonth()) : ("0" + datetime.getMonth())) + "." + datetime.getYear() + " " + ((datetime.getHours() > 9) ? (datetime.getHours()) : ("0" + datetime.getHours())) + ":" + ((datetime.getMinutes() > 9) ? (datetime.getMinutes()) : ("0" + datetime.getMinutes())), Toast.LENGTH_LONG);
                                         toast_show_datetime.show();
-                                        Task task = new Task(description, currentCategory.getIdCategory(), ((datetime.getDate() > 9) ? (datetime.getDate()) : ("0" + datetime.getDate())) + "." + (((datetime.getMonth()+1) > 9) ? ((datetime.getMonth()+1)) : ("0" + (datetime.getMonth()+1))) + "." + datetime.getYear() + " " + ((datetime.getHours() > 9) ? (datetime.getHours()) : ("0" + datetime.getHours())) + ":" + ((datetime.getMinutes() > 9) ? (datetime.getMinutes()) : ("0" + datetime.getMinutes())));
+                                        Task task = new Task(description, idCategory, ((datetime.getDate() > 9) ? (datetime.getDate()) : ("0" + datetime.getDate())) + "." + (((datetime.getMonth()+1) > 9) ? ((datetime.getMonth()+1)) : ("0" + (datetime.getMonth()+1))) + "." + datetime.getYear() + " " + ((datetime.getHours() > 9) ? (datetime.getHours()) : ("0" + datetime.getHours())) + ":" + ((datetime.getMinutes() > 9) ? (datetime.getMinutes()) : ("0" + datetime.getMinutes())));
                                         //TODO: add task in firebase and get id
-                                        task.setIdTask(String.valueOf(index));
+                                        //task.setIdTask(String.valueOf(index));
                                         tasks.add(task);
+
+                                        //fire.writeNewTask(task);
+                                        db.addTask(task);
+
                                         index++;
                                         sortAndShowTasks(layout);
                                         time_alert_dialog.dismiss();
@@ -184,22 +211,108 @@ public class MainAndNavigation extends AppCompatActivity
                 "inside "+subMenu.size(), Toast.LENGTH_SHORT);
         toast_inside_prepareOptionsMenu.show();
 
-        for (int i=0; i< categories.size(); i++){
-            subMenu.removeItem(Integer.valueOf(categories.get(i).getIdCategory()));
+        if (subMenu.size()>2){
+            for (int i=0; i< categories.size(); i++){
+                int id = subMenu.getItem(i).getItemId();
+                subMenu.removeItem(id);
+            }
         }
         //TODO: firebase upload categories
         for (int i=0; i< categories.size(); i++){
             //TODO: clear except nocategory and add new categories
-            subMenu.add(R.id.nav_group_categories,Integer.parseInt(categories.get(i).getIdCategory()), Menu.NONE, categories.get(i).getName()).setIcon(getResources().getDrawable(R.drawable.label));
+            subMenu.add(R.id.nav_group_categories,i, Menu.NONE, categories.get(i).getName()).setIcon(getResources().getDrawable(R.drawable.label));
+            // установить как-то айди categories.get(i).getIdCategory()
         }
 
         return true;
     }
 
+    ValueEventListener valueEventListenerTasks = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            //tasks.clear();
+
+            if (dataSnapshot.exists()) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Task task = snapshot.getValue(Task.class);
+                    tasks.add(task);
+                }
+                //dataAdapterCategoryList.notifyDataSetChanged();
+
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
+
+    ValueEventListener valueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            categories.clear();
+            if (dataSnapshot.exists()) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Category category = snapshot.getValue(Category.class);
+                    categories.add(category);
+                }
+                //dataAdapterCategoryList.notifyDataSetChanged();
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
+
     public void sortAndShowTasks(final LinearLayout linearLayout){
         int previousState=0;
         int currentState=0;
         linearLayout.removeAllViews();
+        tasks.clear();
+
+/*
+        Query query1 = FirebaseDatabase.getInstance().getReference("category:")
+                .orderByChild("idUser")
+                .equalTo(userId);
+        query1.addListenerForSingleValueEvent(valueEventListener);
+*/
+        categories = db.getCategorybyIdUser(userId);
+
+
+        if (idCategory.equals("")){
+            int k =0;
+
+            while ((k<categories.size())&&(!categories.get(k).getName().equals(getString(R.string.no_category)))){
+                k++;
+            }
+            if (k<categories.size())
+                idCategory=categories.get(k).getIdCategory();
+        }
+
+        if (all){
+            //for (int i=0; i<categories.size(); i++){
+                /*
+                Query query = FirebaseDatabase.getInstance().getReference("task:")
+                        .orderByChild("idCategory")
+                        .equalTo(categories.get(i).getIdCategory());
+                query.addListenerForSingleValueEvent(valueEventListenerTasks);
+                */
+                tasks = db.getAllTasks();
+            //}
+        } else {
+            /*
+            Query query = FirebaseDatabase.getInstance().getReference("task")
+                    .orderByChild("idCategory")
+                    .equalTo(idCategory);
+            query.addListenerForSingleValueEvent(valueEventListenerTasks);
+            */
+            tasks = db.getAllTasks();
+        }
+
+
         try {
             tasks = Task.sort(tasks);
         } catch (ParseException e) {
@@ -207,7 +320,11 @@ public class MainAndNavigation extends AppCompatActivity
         }
         Task curr;
         try {
-            previousState = tasks.get(0).timeline();
+            //TODO проверка не пуст ли
+            if(tasks.size()!=0){
+                previousState = tasks.get(0).timeline();
+            }
+
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -223,7 +340,7 @@ public class MainAndNavigation extends AppCompatActivity
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
-                        //TODO: add task in firebase and get id
+                        //TODO: delete task from firebase by tag
                         linearLayout.removeView(buttonView);
                         buttonView.setChecked(true);
                         linearLayout.addView(buttonView);
@@ -232,7 +349,8 @@ public class MainAndNavigation extends AppCompatActivity
             });
             checkbox.setTextSize(20);
             checkbox.setText(curr.toString());
-            checkbox.setId(Integer.parseInt(curr.getIdTask()));
+            checkbox.setTag(curr.getIdTask());
+            //checkbox.setId(Integer.parseInt(curr.getIdTask()));
             if(previousState!=currentState){
                 TextView label = new TextView(th);
                 label.setText(previousState);
@@ -243,10 +361,12 @@ public class MainAndNavigation extends AppCompatActivity
             linearLayout.addView(checkbox, 0);
         }
         try {
-            TextView label = new TextView(th);
-            label.setText(tasks.get(tasks.size()-1).timeline());
-            label.setTextSize(20);
-            layout.addView(label,0);
+            if (tasks.size()-1>=0) {
+                TextView label = new TextView(th);
+                label.setText(tasks.get(tasks.size() - 1).timeline());
+                label.setTextSize(20);
+                layout.addView(label, 0);
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
