@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Database extends SQLiteOpenHelper {
@@ -105,7 +106,7 @@ public class Database extends SQLiteOpenHelper {
         return task;
     }
 
-    public Category getCategory(int id) {
+    public Category getCategory(String id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_CATEGORY, new String[]{"idCategory",
@@ -121,12 +122,49 @@ public class Database extends SQLiteOpenHelper {
         return category;
     }
 
+    public List<Category> getCategorybyIdUser(String idUser) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        List<Category> categoryList=new LinkedList<>();
+        Cursor cursor = db.query(TABLE_CATEGORY, new String[]{"idCategory",
+                        "name", "idIcon", "idUser"}, "idUser" + "=?",
+                new String[]{String.valueOf(idUser)}, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Category category = new Category();
+                category.setIdCategory(cursor.getString(0));
+                category.setName(cursor.getString(1));
+                category.setIdIcon(Integer.parseInt(cursor.getString(2)));
+                category.setIdUser(cursor.getString(3));
+                categoryList.add(category);
+            } while (cursor.moveToNext());
+        }
+
+
+        return categoryList;
+    }
+
     public User getUser(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_CATEGORY, new String[]{"idUser",
                         "login", "pass"}, "idUser" + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+
+        User user = new User(cursor.getString(0), cursor.getString(1), cursor.getString(2));
+
+        return user;
+    }
+
+    public User getUser(String login) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_CATEGORY, new String[]{"idUser",
+                        "login", "pass"}, "login" + "=?",
+                new String[]{String.valueOf(login)}, null, null, null, null);
 
         if (cursor != null) {
             cursor.moveToFirst();

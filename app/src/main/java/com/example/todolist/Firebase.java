@@ -16,9 +16,9 @@ public class Firebase {
     DatabaseReference mDatabase = database.getReference();
 
 
-    public String writeNewCategory(String name, Integer idIcon, Integer idUser) {
+    public String writeNewCategory(String name, Integer idIcon, String idUser) {
         String idCategory = mDatabase.push().getKey();
-        Category category = new Category(name, idIcon, idUser.toString());
+        Category category = new Category(idCategory,name, idIcon, idUser);
 
         mDatabase.child("category:").child(idCategory).setValue(category);
         return idCategory;
@@ -44,22 +44,13 @@ public class Firebase {
         mDatabase.child("users").child(userId).setValue(user);
     }
 
-    public void readUser(String userId, String login, String pass) {
-        mDatabase.child(userId).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                User user = dataSnapshot.getValue(User.class);
-
-                Log.d(TAG, "Login: " + user.getLogin() + ", pass " + user.getPass());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
+    void removeDataCategoryFromDatabase(){
+        DatabaseReference root = FirebaseDatabase.getInstance().getReference("category:");
+        root.setValue(null);
+    }
+    void removeDataTaskFromDatabase(){
+        DatabaseReference root = FirebaseDatabase.getInstance().getReference("task:");
+        root.setValue(null);
     }
 
 

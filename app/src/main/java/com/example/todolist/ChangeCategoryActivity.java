@@ -11,14 +11,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.content.Context;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -29,13 +32,22 @@ public class ChangeCategoryActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private FirebaseDatabase mFirebaseInstance;
     private boolean connected = false;
-    DataAdapterCategoryList dataAdapterCategoryList;
+    private Database db = new Database(this);
+    private Firebase firebase = new Firebase();
+    private DataAdapterCategoryList dataAdapterCategoryList;
+    private List<Category> deletecategoryList=new LinkedList<Category>();
+    private String idUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_category);
+        idUser = getIntent().getStringExtra("idUser");
         recyclerView = findViewById(R.id.recyclerView);
+
+
+        // FirebaseDatabase database = FirebaseDatabase.getInstance();
+        // mDatabase = database.getReference();
 
 
         setInitialData();
@@ -49,7 +61,9 @@ public class ChangeCategoryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // обработчик кнопки крестика
-
+                deletecategoryList.clear();
+                Intent intent = new Intent(ChangeCategoryActivity.this, MainAndNavigation.class);
+                startActivity(intent);
 
             }
         });
@@ -60,18 +74,21 @@ public class ChangeCategoryActivity extends AppCompatActivity {
     //добавление данных в список категории
     private void setInitialData() {
         categoryList = new ArrayList<>();
-        Database db = new Database(this);
-        Firebase f = new Firebase();
+
         System.out.println("Inserting ..");
         if (CheckConnection()) {
             //чтение всех элементов категории из firebase
-            String idCat = f.writeNewCategory("Home1", R.drawable.clear, 919999);
-            mDatabase = FirebaseDatabase.getInstance().getReference("category:");
-            mDatabase.addListenerForSingleValueEvent(valueEventListener);
+            // firebase.writeNewCategory("home2",R.drawable.done,idUser);
+            //  mDatabase.addListenerForSingleValueEvent(valueEventListener);
+            Query query = FirebaseDatabase.getInstance().getReference("category:")
+                    .orderByChild("idUser")
+                    .equalTo(idUser);
+            query.addListenerForSingleValueEvent(valueEventListener);
         } else {
 
-        //    db.addCategory(new Category("Home", R.drawable.clear, "9954999"));
-            categoryList = db.getAllCategorys();
+            // db.addCategory(new Category("Home", R.drawable.clear, idUser));
+            // categoryList = db.getAllCategorys();
+            categoryList=db.getCategorybyIdUser(idUser);
             // db.addCategory(new Category("Work", R.drawable.done, 99999));
         }
 
@@ -91,8 +108,29 @@ public class ChangeCategoryActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        //действия при нажатии на галочку
         if (item.getItemId() == R.id.action_done) {
-            Intent intent = new Intent(this, MainActivity.class);
+            deletecategoryList=dataAdapterCategoryList.listDeleteCategory();
+            if (CheckConnection()) {
+                //чтение всех элементов категории из firebase
+                for(int i=0;i<deletecategoryList.size();i++){
+                    String s=deletecategoryList.get(i).getIdCategory();
+                    mDatabase = FirebaseDatabase.getInstance().getReference()
+                            .child("category:").child(deletecategoryList.get(i).getIdCategory().toString());
+                    mDatabase.removeValue();
+                    mDatabase.addListenerForSingleValueEvent(valueEventListener);
+
+                }
+                Toast.makeText(ChangeCategoryActivity.this, "Удалено из firebase", Toast.LENGTH_SHORT).show();
+            } else {
+                for(int i=0;i<deletecategoryList.size();i++) {
+                    db.deleteCategory(deletecategoryList.get(i));
+
+                }
+                Toast.makeText(ChangeCategoryActivity.this, "Удалено из БД", Toast.LENGTH_SHORT).show();
+                // db.addCategory(new Category("Work", R.drawable.done, 99999));
+            }
+            Intent intent = new Intent(this, MainAndNavigation.class);
             startActivity(intent);
         }
         return true;

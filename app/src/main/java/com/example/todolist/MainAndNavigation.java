@@ -47,6 +47,7 @@ public class MainAndNavigation extends AppCompatActivity
     Date datetime = new Date();
     AppCompatActivity th = new AppCompatActivity();
     Menu subMenu;
+    String userId;
     //temporary
     int index = 0;
     Category currentCategory = new Category("1","1", R.drawable.add,"1");
@@ -57,6 +58,8 @@ public class MainAndNavigation extends AppCompatActivity
         setContentView(R.layout.activity_main_and_navigation);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        userId = getIntent().getStringExtra("idUser");
 
         //TODO REMOVE
         categories.add(currentCategory);
@@ -291,9 +294,11 @@ public class MainAndNavigation extends AppCompatActivity
         if (id == R.id.nav_all_tasks) {
         //TODO: menu
         } else if (id == R.id.nav_add_category) {
-
+            //TODO добавить добавление категории в фаей и базу и обновить меню
         } else if (id == R.id.nav_change_category) {
-
+            Intent intent = new Intent(this, ChangeCategoryActivity.class);
+            intent.putExtra("idUser", userId);//передаю в изменение активити id пользователя который вошел
+            startActivity(intent);
         } else {
             int i=0;
             while ((Integer.parseInt(categories.get(i).getIdCategory())!=id)&&(i<categories.size())){
