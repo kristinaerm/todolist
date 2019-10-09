@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
+import android.util.ArrayMap;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -51,6 +52,7 @@ public class MainAndNavigation extends AppCompatActivity
     Firebase fire = new Firebase();
     boolean all = true;
     private Database db = new Database(this);
+    ArrayMap<Integer,String> menuCategory = new ArrayMap<>();
     //temporary
     int index = 0;
     Category currentCategory = new Category("1","1", R.drawable.add,"1");
@@ -66,6 +68,7 @@ public class MainAndNavigation extends AppCompatActivity
 
         userId = getIntent().getStringExtra("idUser");
         all = getIntent().getBooleanExtra("all", true);
+        idCategory = getIntent().getStringExtra("idCategory");
 
         //TODO REMOVE
 
@@ -73,7 +76,7 @@ public class MainAndNavigation extends AppCompatActivity
         layout = (LinearLayout) findViewById(R.id.linearLayoutMainNavigation);
 
         //fire.writeNewCategory(getString(R.string.no_category), R.drawable.done, userId);
-        //db.addCategory(new Category(getString(R.string.no_category), R.drawable.done, userId));
+        //db.addCategory(new Category("Other", R.drawable.done, userId));
 
 /*
         Query query1 = FirebaseDatabase.getInstance().getReference("category:")
@@ -212,14 +215,16 @@ public class MainAndNavigation extends AppCompatActivity
         toast_inside_prepareOptionsMenu.show();
 
         if (subMenu.size()>2){
-            for (int i=0; i< categories.size(); i++){
+            for (int i=0; i< subMenu.size()-2; i++){
                 int id = subMenu.getItem(i).getItemId();
                 subMenu.removeItem(id);
+                menuCategory.remove(i);
             }
         }
         //TODO: firebase upload categories
         for (int i=0; i< categories.size(); i++){
             //TODO: clear except nocategory and add new categories
+            menuCategory.put(i,categories.get(i).getIdCategory());
             subMenu.add(R.id.nav_group_categories,i, Menu.NONE, categories.get(i).getName()).setIcon(getResources().getDrawable(R.drawable.label));
             // установить как-то айди categories.get(i).getIdCategory()
         }
@@ -300,7 +305,9 @@ public class MainAndNavigation extends AppCompatActivity
                         .equalTo(categories.get(i).getIdCategory());
                 query.addListenerForSingleValueEvent(valueEventListenerTasks);
                 */
-                tasks = db.getAllTasks();
+                for (int i=0; i<categories.size(); i++){
+                    db.getTasksByCategory(categories.get(i).getIdCategory(), tasks);
+                }
             //}
         } else {
             /*
@@ -309,7 +316,7 @@ public class MainAndNavigation extends AppCompatActivity
                     .equalTo(idCategory);
             query.addListenerForSingleValueEvent(valueEventListenerTasks);
             */
-            tasks = db.getAllTasks();
+            tasks = db.getTasksByCategory(idCategory);
         }
 
 
@@ -412,7 +419,9 @@ public class MainAndNavigation extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_all_tasks) {
-        //TODO: menu
+            all=true;
+            idCategory="";
+            sortAndShowTasks(layout);
         } else if (id == R.id.nav_add_category) {
             //TODO добавить добавление категории в фаей и базу и обновить меню
         } else if (id == R.id.nav_change_category) {
@@ -420,13 +429,10 @@ public class MainAndNavigation extends AppCompatActivity
             intent.putExtra("idUser", userId);//передаю в изменение активити id пользователя который вошел
             startActivity(intent);
         } else {
-            int i=0;
-            while ((Integer.parseInt(categories.get(i).getIdCategory())!=id)&&(i<categories.size())){
-                i++;
-            }
-            if (i<categories.size()){
-                //TODO obrabotchik kategorii
-            }
+            String catId = menuCategory.get(id);
+            all=false;
+            idCategory=catId;
+            sortAndShowTasks(layout);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

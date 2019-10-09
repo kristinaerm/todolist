@@ -152,6 +152,50 @@ public class Database extends SQLiteOpenHelper {
         return categoryList;
     }
 
+
+    public LinkedList<Task> getTasksByCategory(String category) {
+        LinkedList<Task> taskList = new LinkedList<>();
+        String selectQuery = "SELECT  * FROM " + TABLE_TASKS;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_TASKS, new String[]{"idTask",
+                        "name", "timeDate"}, "idCategory" + "=?",
+                new String[]{String.valueOf(category)}, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Task task = new Task();
+                task.setIdTask(cursor.getString(0));
+                task.setName(cursor.getString(1));
+                task.setTimeDate(cursor.getString(2));
+                task.setIdCategory(category);
+                taskList.add(task);
+            } while (cursor.moveToNext());
+        }
+
+        return taskList;
+    }
+
+    public LinkedList<Task> getTasksByCategory(String category, LinkedList<Task> taskList) {
+        String selectQuery = "SELECT  * FROM " + TABLE_TASKS;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_TASKS, new String[]{"idTask",
+                        "name", "timeDate"}, "idCategory" + "=?",
+                new String[]{String.valueOf(category)}, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Task task = new Task();
+                task.setIdTask(cursor.getString(0));
+                task.setName(cursor.getString(1));
+                task.setTimeDate(cursor.getString(2));
+                task.setIdCategory(category);
+                taskList.add(task);
+            } while (cursor.moveToNext());
+        }
+
+        return taskList;
+    }
+
     public User getUser(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
