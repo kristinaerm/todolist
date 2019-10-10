@@ -45,6 +45,7 @@ public class MainAndNavigation extends AppCompatActivity
     private LinkedList<Category> categories = new LinkedList<>();
     LinearLayout layout;
     String description;
+    String nameCategory;
     Date datetime = new Date();
     AppCompatActivity th = new AppCompatActivity();
     Menu subMenu;
@@ -57,7 +58,6 @@ public class MainAndNavigation extends AppCompatActivity
     int index = 0;
     Category currentCategory = new Category("1","1", R.drawable.add,"1");
     String idCategory = "";
-    String nameCategory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -437,6 +437,8 @@ public class MainAndNavigation extends AppCompatActivity
             idCategory="";
             sortAndShowTasks(layout);
         } else if (id == R.id.nav_add_category) {
+
+            //TODO добавить добавление категории в фаей и базу и обновить меню
             final AlertDialog.Builder builder = new AlertDialog.Builder(th);
             builder.setTitle(getString(R.string.enter_category));
 

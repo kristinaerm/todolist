@@ -21,6 +21,7 @@
     <string name="add">+</string>
     <!-- Strings related to mainActivity -->
     <string name="enter_task">Enter task</string>
+    <string name="enter_category">Enter category</string>
     <string name="enter_task_date">Enter date</string>
     <string name="enter_task_time">Enter time</string>
     <string name="enter_task_datetime">Enter date and time</string>

@@ -80,16 +80,28 @@ public class ChangeCategoryActivity extends AppCompatActivity {
         //чтение всех элементов категории из firebase
         // firebase.writeNewCategory("home2",R.drawable.done,idUser);
         //  mDatabase.addListenerForSingleValueEvent(valueEventListener);
+
+      //  if (CheckConnection()) {
+            //чтение всех элементов категории из firebase
+            // firebase.writeNewCategory("home2",R.drawable.done,idUser);
+            //  mDatabase.addListenerForSingleValueEvent(valueEventListener);
+
        /*     Query query = FirebaseDatabase.getInstance().getReference("category:")
                     .orderByChild("idUser")
                     .equalTo(idUser);
             query.addListenerForSingleValueEvent(valueEventListener);*/
         //} else {
 
+
         //  db.addCategory(new Category("Home", R.drawable.clear, idUser));
         // categoryList = db.getAllCategorys();
         categoryList=db.getCategorybyIdUser(idUser);
         // db.addCategory(new Category("Work", R.drawable.done, 99999));
+
+           //  db.addCategory(new Category("Home", R.drawable.clear, idUser));
+            // categoryList = db.getAllCategorys();
+            //categoryList=db.getCategorybyIdUser(idUser);
+            // db.addCategory(new Category("Work", R.drawable.done, 99999));
         //}
 
     }
@@ -123,10 +135,12 @@ public class ChangeCategoryActivity extends AppCompatActivity {
                 }
                 Toast.makeText(ChangeCategoryActivity.this, "Удалено из firebase", Toast.LENGTH_SHORT).show();
             } else {*/
-            for(int i=0;i<deletecategoryList.size();i++) {
-                db.deleteCategory(deletecategoryList.get(i));
 
-                //  }
+                for(int i=0;i<deletecategoryList.size();i++) {
+                    db.deleteCategory(deletecategoryList.get(i));
+
+              //  }
+
                 Toast.makeText(ChangeCategoryActivity.this, "Удалено из БД", Toast.LENGTH_SHORT).show();
                 // db.addCategory(new Category("Work", R.drawable.done, 99999));
             }
