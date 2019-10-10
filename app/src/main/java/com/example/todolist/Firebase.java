@@ -24,6 +24,14 @@ public class Firebase {
         return idCategory;
     }
 
+    public String writeNewTask(Task task) {
+        String idTask = mDatabase.push().getKey();
+        task.setIdTask(idTask);
+
+        mDatabase.child("task:").child(idTask).setValue(task);
+        return idTask;
+    }
+
     public void updateUser(String idUser, String login, String pass) {
         mDatabase.child(idUser).child("login").setValue(login);
         mDatabase.child(idUser).child("pass").setValue(pass);
