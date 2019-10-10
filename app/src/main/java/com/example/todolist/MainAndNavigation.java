@@ -57,6 +57,7 @@ public class MainAndNavigation extends AppCompatActivity
     int index = 0;
     Category currentCategory = new Category("1","1", R.drawable.add,"1");
     String idCategory = "";
+    String nameCategory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +67,7 @@ public class MainAndNavigation extends AppCompatActivity
         setSupportActionBar(toolbar);
 
 
+        Database.setUndeletableCategory(getString(R.string.no_category));
         userId = getIntent().getStringExtra("idUser");
         all = getIntent().getBooleanExtra("all", true);
         idCategory = getIntent().getStringExtra("idCategory");
@@ -214,11 +216,18 @@ public class MainAndNavigation extends AppCompatActivity
                 "inside "+subMenu.size(), Toast.LENGTH_SHORT);
         toast_inside_prepareOptionsMenu.show();
 
+        categories = db.getCategorybyIdUser(userId);
+        if (categories.size()==0){
+            db.addNoCategory(new Category(getString(R.string.no_category), R.drawable.label, userId));
+            categories = db.getCategorybyIdUser(userId);
+        }
+
+        int s = menuCategory.size();
         if (subMenu.size()>2){
-            for (int i=0; i< subMenu.size()-2; i++){
-                int id = subMenu.getItem(i).getItemId();
+            for (int i=0; i< s; i++){
+                int id = subMenu.getItem(0).getItemId();
                 subMenu.removeItem(id);
-                menuCategory.remove(i);
+                menuCategory.remove(0);
             }
         }
         //TODO: firebase upload categories
@@ -286,6 +295,11 @@ public class MainAndNavigation extends AppCompatActivity
 */
         categories = db.getCategorybyIdUser(userId);
 
+        if (categories.size()==0){
+            db.addNoCategory(new Category(getString(R.string.no_category), R.drawable.label, userId));
+            categories = db.getCategorybyIdUser(userId);
+        }
+
 
         if (idCategory.equals("")){
             int k =0;
@@ -349,8 +363,8 @@ public class MainAndNavigation extends AppCompatActivity
                     if (isChecked) {
                         //TODO: delete task from firebase by tag
                         linearLayout.removeView(buttonView);
-                        buttonView.setChecked(true);
-                        linearLayout.addView(buttonView);
+                        db.deleteTask((String)buttonView.getTag());
+                        sortAndShowTasks(layout);
                     }
                 }
             });
@@ -423,7 +437,29 @@ public class MainAndNavigation extends AppCompatActivity
             idCategory="";
             sortAndShowTasks(layout);
         } else if (id == R.id.nav_add_category) {
-            //TODO добавить добавление категории в фаей и базу и обновить меню
+            final AlertDialog.Builder builder = new AlertDialog.Builder(th);
+            builder.setTitle(getString(R.string.enter_category));
+
+            final EditText input = new EditText(th);
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
+
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    nameCategory = input.getText().toString();
+                    db.addCategory(new Category(nameCategory,R.drawable.label,userId));
+                    invalidateOptionsMenu();
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int arg1) {
+                    dialog.cancel();
+                }
+            });
+            AlertDialog alert = builder.create();
+            alert.show();
+
         } else if (id == R.id.nav_change_category) {
             Intent intent = new Intent(this, ChangeCategoryActivity.class);
             intent.putExtra("idUser", userId);//передаю в изменение активити id пользователя который вошел

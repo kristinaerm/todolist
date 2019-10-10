@@ -18,6 +18,15 @@ public class Database extends SQLiteOpenHelper {
     private static final String TABLE_TASKS = "task";
     private static final String TABLE_CATEGORY = "category";
     private static final String TABLE_USER = "user";
+    private static String undeletableCategory = "";
+
+    public static void setUndeletableCategory(String undeletableCategory) {
+        Database.undeletableCategory = undeletableCategory;
+    }
+
+    public static String getUndeletableCategory() {
+        return undeletableCategory;
+    }
 
     public Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -77,15 +86,30 @@ public class Database extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void addCategory(Category category) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("name", category.getName());
-        values.put("idIcon", category.getIdIcon());
-        values.put("idUser", category.getIdUser());
+    public void addNoCategory(Category category) {
 
-        db.insert(TABLE_CATEGORY, null, values);
-        db.close();
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("name", category.getName());
+            values.put("idIcon", category.getIdIcon());
+            values.put("idUser", category.getIdUser());
+
+            db.insert(TABLE_CATEGORY, null, values);
+            db.close();
+
+    }
+
+    public void addCategory(Category category) {
+        if (!category.getName().equals(undeletableCategory)){
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("name", category.getName());
+            values.put("idIcon", category.getIdIcon());
+            values.put("idUser", category.getIdUser());
+
+            db.insert(TABLE_CATEGORY, null, values);
+            db.close();
+        }
     }
 
     public void addUser(User user) {
@@ -322,16 +346,19 @@ public class Database extends SQLiteOpenHelper {
                 new String[]{String.valueOf(user.getIdUser())});
     }
 
-    public void deleteTask(Task task) {
+    public void deleteTask(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_TASKS, "idTask" + " = ?", new String[]{String.valueOf(task.getIdTask())});
+        db.delete(TABLE_TASKS, "idTask" + " = ?", new String[]{String.valueOf(id)});
         db.close();
     }
 
     public void deleteCategory(Category category) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_CATEGORY, "idCategory" + " = ?", new String[]{String.valueOf(category.getIdCategory())});
-        db.close();
+        if(!category.getName().equals(undeletableCategory))
+        {
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.delete(TABLE_CATEGORY, "idCategory" + " = ?", new String[]{String.valueOf(category.getIdCategory())});
+            db.close();
+        }
     }
 
     public void deleteUser(User user) {

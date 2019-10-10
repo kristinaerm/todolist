@@ -42,5 +42,6 @@
     <string name="english">ENG</string>
     <string name="russian">RU</string>
     <string name="no_category">No category</string>
-
+    <string name="enter_category">Enter category</string>
+    <string name="todolist">ToDoList</string>
 </resources>

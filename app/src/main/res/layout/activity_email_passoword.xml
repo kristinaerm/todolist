@@ -17,7 +17,7 @@
         android:layout_marginTop="145dp"
         android:hint="Email"
 
-        android:textSize="30dp"
+        android:textSize="14sp"
         tools:ignore="MissingConstraints" />
 
     <EditText
@@ -28,8 +28,9 @@
         android:layout_centerHorizontal="true"
 
         android:hint="Password"
-        android:textSize="30dp"
-        tools:ignore="MissingConstraints" />
+        android:textSize="14sp"
+        tools:ignore="MissingConstraints"
+        android:inputType="textPassword"/>
 
     <LinearLayout android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -37,11 +38,12 @@
         android:layout_marginTop="20dp"
         tools:ignore="MissingConstraints">
 
-        <Button android:layout_width="match_parent"
+        <Button
+            android:id="@+id/btn_registration"
+            android:layout_width="230dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Регистрация"
-            android:id="@+id/btn_registration"/>
+            android:text="Регистрация" />
 
 
     </LinearLayout>

@@ -130,6 +130,7 @@ public class EmailPassowordActivity extends AppCompatActivity implements View.On
                     Intent intent = new Intent(EmailPassowordActivity.this, MainAndNavigation.class);
                     intent.putExtra("idUser", user.getUid());//передаю в главное активити id пользователя который вошел
                     intent.putExtra("all", true);//передаю в главное активити хочу все таски
+                    intent.putExtra("idCategory", "");//передаю в главное активити хочу без категрии
                     startActivity(intent);
 
 

@@ -51,6 +51,7 @@ public class DataAdapterCategoryList extends RecyclerView.Adapter<DataAdapterCat
 
         holder.imageView.setImageResource(category.getIdIcon());
         holder.nameView.setText(category.getName());
+        holder.nameView.setTextSize(18);
 
         //обработчик кнопки удаления
         holder.imageButton.setOnClickListener(new View.OnClickListener() {
