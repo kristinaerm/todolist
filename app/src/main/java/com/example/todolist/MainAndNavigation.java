@@ -44,10 +44,12 @@ public class MainAndNavigation extends AppCompatActivity
     private LinkedList<Category> categories = new LinkedList<>();
     LinearLayout layout;
     String description;
+    String nameCategory;
     Date datetime = new Date();
     AppCompatActivity th = new AppCompatActivity();
     Menu subMenu;
     String userId;
+    Database db =new Database(MainAndNavigation.this);
     //temporary
     int index = 0;
     Category currentCategory = new Category("1","1", R.drawable.add,"1");
@@ -295,6 +297,27 @@ public class MainAndNavigation extends AppCompatActivity
         //TODO: menu
         } else if (id == R.id.nav_add_category) {
             //TODO добавить добавление категории в фаей и базу и обновить меню
+            final AlertDialog.Builder builder = new AlertDialog.Builder(th);
+            builder.setTitle(getString(R.string.enter_category));
+
+            final EditText input = new EditText(th);
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
+
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    nameCategory = input.getText().toString();
+                    db.addCategory(new Category(nameCategory,R.drawable.iccategory,userId));
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int arg1) {
+                    dialog.cancel();
+                }
+            });
+            AlertDialog alert = builder.create();
+            alert.show();
         } else if (id == R.id.nav_change_category) {
             Intent intent = new Intent(this, ChangeCategoryActivity.class);
             intent.putExtra("idUser", userId);//передаю в изменение активити id пользователя который вошел
