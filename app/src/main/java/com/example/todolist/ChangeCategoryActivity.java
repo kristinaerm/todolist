@@ -76,21 +76,21 @@ public class ChangeCategoryActivity extends AppCompatActivity {
         categoryList = new ArrayList<>();
 
         System.out.println("Inserting ..");
-        if (CheckConnection()) {
+      //  if (CheckConnection()) {
             //чтение всех элементов категории из firebase
             // firebase.writeNewCategory("home2",R.drawable.done,idUser);
             //  mDatabase.addListenerForSingleValueEvent(valueEventListener);
-            Query query = FirebaseDatabase.getInstance().getReference("category:")
+       /*     Query query = FirebaseDatabase.getInstance().getReference("category:")
                     .orderByChild("idUser")
                     .equalTo(idUser);
-            query.addListenerForSingleValueEvent(valueEventListener);
-        } else {
+            query.addListenerForSingleValueEvent(valueEventListener);*/
+        //} else {
 
-            // db.addCategory(new Category("Home", R.drawable.clear, idUser));
+           //  db.addCategory(new Category("Home", R.drawable.clear, idUser));
             // categoryList = db.getAllCategorys();
             categoryList=db.getCategorybyIdUser(idUser);
             // db.addCategory(new Category("Work", R.drawable.done, 99999));
-        }
+        //}
 
     }
 
@@ -111,7 +111,7 @@ public class ChangeCategoryActivity extends AppCompatActivity {
         //действия при нажатии на галочку
         if (item.getItemId() == R.id.action_done) {
             deletecategoryList=dataAdapterCategoryList.listDeleteCategory();
-            if (CheckConnection()) {
+           /* if (CheckConnection()) {
                 //чтение всех элементов категории из firebase
                 for(int i=0;i<deletecategoryList.size();i++){
                     String s=deletecategoryList.get(i).getIdCategory();
@@ -122,11 +122,11 @@ public class ChangeCategoryActivity extends AppCompatActivity {
 
                 }
                 Toast.makeText(ChangeCategoryActivity.this, "Удалено из firebase", Toast.LENGTH_SHORT).show();
-            } else {
+            } else {*/
                 for(int i=0;i<deletecategoryList.size();i++) {
                     db.deleteCategory(deletecategoryList.get(i));
 
-                }
+              //  }
                 Toast.makeText(ChangeCategoryActivity.this, "Удалено из БД", Toast.LENGTH_SHORT).show();
                 // db.addCategory(new Category("Work", R.drawable.done, 99999));
             }
