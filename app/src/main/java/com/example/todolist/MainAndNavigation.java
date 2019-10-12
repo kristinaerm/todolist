@@ -10,7 +10,6 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.ArrayMap;
@@ -63,24 +62,65 @@ public class MainAndNavigation extends AppCompatActivity
     String idCategory = "";
     NotificationHelper notificationHelper;
 
+    /*
     public void sendOnChannelTask(String title, String text){
         NotificationCompat.Builder nb = notificationHelper.getChannelTaskNotification(title,text);
-    notificationHelper.getNotificationManager().notify(1, nb.build());
+    notificationHelper.getNotificationManager().notify(-11, nb.build());
+    }
+    */
+
+    private static int countForNotifications = 0;
+
+    public static int getCountForNotifications() {
+        return countForNotifications;
     }
 
-    private void startAlarm (Calendar c){
+    public static void IncCount() {
+        countForNotifications++;
+    }
+
+    private static int countForPendings = 0;
+
+    public static int getCountForPendings() {
+        return countForPendings;
+    }
+
+    public static void IncCount1() {
+        countForPendings++;
+    }
+
+    LinkedList<AlarmManager> alarmManagers = new LinkedList<>();
+    LinkedList<PendingIntent> pendingIntents = new LinkedList<>();
+
+    private void startAlarm (Calendar c, String title, String text){
+        if (c.before(Calendar.getInstance())) return;
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManagers.add(alarmManager);
         Intent intent = new Intent(this, AlertReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,1, intent, 0);
+        intent.putExtra("title", title);
+        intent.putExtra("text", text);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, getCountForPendings(), intent, PendingIntent.FLAG_UPDATE_CURRENT );
+        pendingIntents.add(pendingIntent);
+        IncCount1();
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),pendingIntent);
 
     }
 
-    private void cancelAlarm(){
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlertReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,1, intent, 0);
-        alarmManager.cancel(pendingIntent);
+    private void cancelAlarms(){
+
+        //TODO check
+        for (int i = 0; i<tasks.size(); i++){
+            //try{
+                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                Intent intent = new Intent(this, AlertReceiver.class);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(this,i, intent, 0);
+                alarmManager.cancel(pendingIntent);
+            //} catch (IndexOutOfBoundsException ex){
+
+            //}
+        }
+        countForPendings = 0;
+
     }
 
     @Override
@@ -92,11 +132,18 @@ public class MainAndNavigation extends AppCompatActivity
 
 
         notificationHelper = new NotificationHelper(this);
+        /*
         sendOnChannelTask("main", "main");
+        */
+        /*
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.SECOND, 4);
+        c.add(Calendar.SECOND, 2);
         startAlarm(c);
-
+        Calendar cc = Calendar.getInstance();
+        cc.add(Calendar.SECOND, 7);
+        startAlarm(cc);
+        cancelAlarms();
+        */
 
         Database.setUndeletableCategory(getString(R.string.no_category));
         userId = getIntent().getStringExtra("idUser");
@@ -316,6 +363,7 @@ public class MainAndNavigation extends AppCompatActivity
         int previousState=0;
         int currentState=0;
         linearLayout.removeAllViews();
+        cancelAlarms();
         tasks.clear();
 
 /*
@@ -411,6 +459,13 @@ public class MainAndNavigation extends AppCompatActivity
                 previousState=currentState;
             }
             linearLayout.addView(checkbox, 0);
+
+
+            try {
+                startAlarm(curr.getTimeDateCalendar(),curr.toString(), getString(R.string.notification_title));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
         try {
             if (tasks.size()-1>=0) {

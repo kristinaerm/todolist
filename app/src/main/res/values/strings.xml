@@ -44,4 +44,5 @@
     <string name="russian">RU</string>
     <string name="no_category">No category</string>
     <string name="todolist">ToDoList</string>
+    <string name="notification_title">Click here to view your ToDoList...</string>
 </resources>

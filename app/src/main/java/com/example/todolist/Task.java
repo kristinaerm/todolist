@@ -61,12 +61,21 @@ public class Task {
         this.idTask = idTask;
     }
 
+
     public String getIdCategory() {
         return idCategory;
     }
 
     public void setIdCategory(String idCategory) {
         this.idCategory = idCategory;
+    }
+
+    public Calendar getTimeDateCalendar() throws ParseException {
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+        Date date = sdf.parse(timeDate);
+        c.setTime(date);
+        return c;
     }
 
     public String getTimeDate() {
