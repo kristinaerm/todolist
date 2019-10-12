@@ -43,6 +43,13 @@
     <string name="english">ENG</string>
     <string name="russian">RU</string>
     <string name="no_category">No category</string>
-    <string name="enter_category">Enter category</string>
     <string name="todolist">ToDoList</string>
+
+    <!-- Strings related to EmailPasswordActivity -->
+    <string name="registration">Registration</string>
+    <string name="singin">Sing in</string>
+
+    <!-- Strings related to ChangeActivity -->
+    <string name="titelChange">Change category of notes</string>
+
 </resources>

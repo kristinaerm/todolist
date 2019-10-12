@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -28,6 +29,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -197,16 +199,17 @@ public class MainAndNavigation extends AppCompatActivity
         MenuItem category = menu.getItem(1);
         subMenu = category.getSubMenu();
 
-        /*
+        //TODO кнопка выхода из приложения и аккаунта
         Button btn = (Button) findViewById(R.id.btn);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(th, ChangeCategoryActivity.class);
+                FirebaseAuth. getInstance (). signOut ();
+                Intent intent = new Intent(MainAndNavigation.this, EmailPassowordActivity.class);
                 startActivity(intent);
             }
         });
-        */
+
 
     }
 
