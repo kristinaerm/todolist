@@ -1,5 +1,8 @@
 package com.example.todolist;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -7,6 +10,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.ArrayMap;
@@ -30,11 +34,10 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -58,6 +61,27 @@ public class MainAndNavigation extends AppCompatActivity
     int index = 0;
     Category currentCategory = new Category("1","1", R.drawable.add,"1");
     String idCategory = "";
+    NotificationHelper notificationHelper;
+
+    public void sendOnChannelTask(String title, String text){
+        NotificationCompat.Builder nb = notificationHelper.getChannelTaskNotification(title,text);
+    notificationHelper.getNotificationManager().notify(1, nb.build());
+    }
+
+    private void startAlarm (Calendar c){
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlertReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,1, intent, 0);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),pendingIntent);
+
+    }
+
+    private void cancelAlarm(){
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlertReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,1, intent, 0);
+        alarmManager.cancel(pendingIntent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +89,13 @@ public class MainAndNavigation extends AppCompatActivity
         setContentView(R.layout.activity_main_and_navigation);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+        notificationHelper = new NotificationHelper(this);
+        sendOnChannelTask("main", "main");
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.SECOND, 4);
+        startAlarm(c);
 
 
         Database.setUndeletableCategory(getString(R.string.no_category));
