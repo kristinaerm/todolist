@@ -1,15 +1,7 @@
 package com.example.todolist;
 
-import android.util.Log;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-
-import static android.content.ContentValues.TAG;
 
 public class Firebase {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -18,7 +10,7 @@ public class Firebase {
 
     public String writeNewCategory(String name, Integer idIcon, String idUser) {
         String idCategory = mDatabase.push().getKey();
-        Category category = new Category(idCategory,name, idIcon, idUser);
+        Category category = new Category(idCategory, name, idIcon, idUser);
 
         mDatabase.child("category:").child(idCategory).setValue(category);
         return idCategory;
@@ -52,11 +44,12 @@ public class Firebase {
         mDatabase.child("users").child(userId).setValue(user);
     }
 
-    void removeDataCategoryFromDatabase(){
+    void removeDataCategoryFromDatabase() {
         DatabaseReference root = FirebaseDatabase.getInstance().getReference("category:");
         root.setValue(null);
     }
-    void removeDataTaskFromDatabase(){
+
+    void removeDataTaskFromDatabase() {
         DatabaseReference root = FirebaseDatabase.getInstance().getReference("task:");
         root.setValue(null);
     }

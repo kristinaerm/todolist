@@ -2,15 +2,14 @@ package com.example.todolist;
 
 import android.content.Intent;
 import android.graphics.PorterDuff;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,7 +28,7 @@ public class EmailPassowordActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_email_passoword);
-        db=new Database(EmailPassowordActivity.this);
+        db = new Database(EmailPassowordActivity.this);
         mAuth = FirebaseAuth.getInstance();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -39,14 +38,13 @@ public class EmailPassowordActivity extends AppCompatActivity implements View.On
                 if (user != null) {
                     // User is signed in
                     Intent intent = new Intent(EmailPassowordActivity.this, MainAndNavigation.class);
-                    intent.putExtra("idUser", user.getUid());//передаю в главное активити id пользователя который вошел
-                    intent.putExtra("all", true);//передаю в главное активити хочу все таски
-                    intent.putExtra("idCategory", "");//передаю в главное активити хочу без категрии
+                    intent.putExtra(MainAndNavigation.ID_USER, user.getUid());//передаю в главное активити id пользователя который вошел
+                    intent.putExtra(MainAndNavigation.ALL_TASKS, true);//передаю в главное активити хочу все таски
+                    intent.putExtra(MainAndNavigation.ID_CATEGORY_TO_SELECT, "");//передаю в главное активити хочу без категрии
                     startActivity(intent);
 
                 } else {
                     // User is signed out
-
 
 
                 }
@@ -64,8 +62,8 @@ public class EmailPassowordActivity extends AppCompatActivity implements View.On
 
     @Override
     public void onClick(View view) {
-        EditText editEmail=(EditText)findViewById(R.id.et_email);
-        EditText editPass=(EditText)findViewById(R.id.et_password);
+        EditText editEmail = (EditText) findViewById(R.id.et_email);
+        EditText editPass = (EditText) findViewById(R.id.et_password);
         if (view.getId() == R.id.btn_sign_in) {
             //    User user = db.getUser(editEmail.getText().toString());
 
@@ -116,8 +114,8 @@ public class EmailPassowordActivity extends AppCompatActivity implements View.On
     }
 
     public void signin(String email, String password) {
-        EditText editEmail=(EditText)findViewById(R.id.et_email);
-        EditText editPass=(EditText)findViewById(R.id.et_password);
+        EditText editEmail = (EditText) findViewById(R.id.et_email);
+        EditText editPass = (EditText) findViewById(R.id.et_password);
 
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
 
@@ -128,9 +126,9 @@ public class EmailPassowordActivity extends AppCompatActivity implements View.On
 
                     Toast.makeText(EmailPassowordActivity.this, "Авторизаци успешна", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(EmailPassowordActivity.this, MainAndNavigation.class);
-                    intent.putExtra("idUser", user.getUid());//передаю в главное активити id пользователя который вошел
-                    intent.putExtra("all", true);//передаю в главное активити хочу все таски
-                    intent.putExtra("idCategory", "");//передаю в главное активити хочу без категрии
+                    intent.putExtra(MainAndNavigation.ID_USER, user.getUid());//передаю в главное активити id пользователя который вошел
+                    intent.putExtra(MainAndNavigation.ALL_TASKS, true);//передаю в главное активити хочу все таски
+                    intent.putExtra(MainAndNavigation.ID_CATEGORY_TO_SELECT, "");//передаю в главное активити хочу без категрии
                     startActivity(intent);
 
 
@@ -153,6 +151,7 @@ public class EmailPassowordActivity extends AppCompatActivity implements View.On
                     }
                 });
     }
+
     private boolean isEmpty(EditText etText) {
         if (etText.getText().toString().trim().length() > 0)
             return false;

@@ -19,14 +19,14 @@ public class NotificationHelper extends ContextWrapper {
 
     public NotificationHelper(Context base) {
         super(base);
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannels();
         }
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    public void createChannels(){
-        NotificationChannel channelTask = new NotificationChannel(CHANNEL1ID,CHANNEL1NAME, NotificationManager.IMPORTANCE_DEFAULT);
+    public void createChannels() {
+        NotificationChannel channelTask = new NotificationChannel(CHANNEL1ID, CHANNEL1NAME, NotificationManager.IMPORTANCE_DEFAULT);
         channelTask.enableLights(true);
         channelTask.enableVibration(true);
         channelTask.setLightColor(R.color.colorPrimary);
@@ -36,16 +36,16 @@ public class NotificationHelper extends ContextWrapper {
     }
 
     public NotificationManager getNotificationManager() {
-        if (notificationManager == null){
-            notificationManager= (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager == null) {
+            notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         }
         return notificationManager;
 
     }
 
-    public NotificationCompat.Builder getChannelTaskNotification(String title, String text){
+    public NotificationCompat.Builder getChannelTaskNotification(String title, String text) {
         Intent mainIntent = new Intent(this, EmailPassowordActivity.class);
-        PendingIntent pendingMainIntent = PendingIntent.getActivity(this, 1,mainIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingMainIntent = PendingIntent.getActivity(this, 1, mainIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         return new NotificationCompat.Builder(getApplicationContext(), CHANNEL1ID)
                 .setContentTitle(title)
                 .setContentText(text)
