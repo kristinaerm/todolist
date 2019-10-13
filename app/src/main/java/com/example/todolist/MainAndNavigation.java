@@ -11,7 +11,9 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.ArrayMap;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -61,6 +63,13 @@ public class MainAndNavigation extends AppCompatActivity
     Category currentCategory = new Category("1","1", R.drawable.add,"1");
     String idCategory = "";
     NotificationHelper notificationHelper;
+    boolean isEnteringText = false;
+    boolean isPickingDate = false;
+    boolean isPickingTime = false;
+    String enteredText = null;
+    Date pickedTime = null;
+    Date pickedDate = null;
+
 
     /*
     public void sendOnChannelTask(String title, String text){
@@ -181,86 +190,7 @@ public class MainAndNavigation extends AppCompatActivity
         fab.setImageDrawable(myFabSrc);
 
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(th);
-                builder.setTitle(getString(R.string.enter_task));
-
-                final EditText input = new EditText(th);
-                input.setInputType(InputType.TYPE_CLASS_TEXT);
-                builder.setView(input);
-
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast toast_show_description = Toast.makeText(getApplicationContext(),
-                                input.getText(), Toast.LENGTH_SHORT);
-                        toast_show_description.show();
-                        description = input.getText().toString();
-
-                        final View date_dialog_view = View.inflate(th, R.layout.date_layout, null);
-                        final AlertDialog date_alert_dialog = new AlertDialog.Builder(th).create();
-
-                        date_dialog_view.findViewById(R.id.button_date).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-
-                                DatePicker datePicker = (DatePicker) date_dialog_view.findViewById(R.id.datePicker1);
-                                datetime = new Date(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
-
-                                Toast toast_show_date = Toast.makeText(getApplicationContext(),
-                                        datetime.getYear() + "-" + datetime.getMonth() + "-" + datetime.getDate(), Toast.LENGTH_SHORT);
-                                toast_show_date.show();
-
-                                final View time_dialog_view = View.inflate(th, R.layout.time_layout, null);
-                                final AlertDialog time_alert_dialog = new AlertDialog.Builder(th).create();
-
-                                time_dialog_view.findViewById(R.id.button_time).setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-
-                                        TimePicker timepicker = (TimePicker) time_dialog_view.findViewById(R.id.timePicker1);
-                                        Toast toast_show_time = Toast.makeText(getApplicationContext(),
-                                                timepicker.getCurrentHour() + ":" + timepicker.getCurrentMinute(), Toast.LENGTH_SHORT);
-                                        toast_show_time.show();
-                                        datetime = new Date(datetime.getYear(), datetime.getMonth(), datetime.getDate(), timepicker.getCurrentHour().intValue(), timepicker.getCurrentMinute().intValue());
-                                        Toast toast_show_datetime = Toast.makeText(getApplicationContext(),
-                                                ((datetime.getDate() > 9) ? (datetime.getDate()) : ("0" + datetime.getDate())) + "." + ((datetime.getMonth() > 9) ? (datetime.getMonth()) : ("0" + datetime.getMonth())) + "." + datetime.getYear() + " " + ((datetime.getHours() > 9) ? (datetime.getHours()) : ("0" + datetime.getHours())) + ":" + ((datetime.getMinutes() > 9) ? (datetime.getMinutes()) : ("0" + datetime.getMinutes())), Toast.LENGTH_LONG);
-                                        toast_show_datetime.show();
-                                        Task task = new Task(description, idCategory, ((datetime.getDate() > 9) ? (datetime.getDate()) : ("0" + datetime.getDate())) + "." + (((datetime.getMonth()+1) > 9) ? ((datetime.getMonth()+1)) : ("0" + (datetime.getMonth()+1))) + "." + datetime.getYear() + " " + ((datetime.getHours() > 9) ? (datetime.getHours()) : ("0" + datetime.getHours())) + ":" + ((datetime.getMinutes() > 9) ? (datetime.getMinutes()) : ("0" + datetime.getMinutes())));
-                                        //TODO: add task in firebase and get id
-                                        //task.setIdTask(String.valueOf(index));
-                                        tasks.add(task);
-
-                                        //fire.writeNewTask(task);
-                                        db.addTask(task);
-
-                                        index++;
-                                        sortAndShowTasks(layout);
-                                        time_alert_dialog.dismiss();
-                                    }
-                                });
-                                time_alert_dialog.setView(time_dialog_view);
-                                time_alert_dialog.show();
-
-                                date_alert_dialog.dismiss();
-
-                            }
-                        });
-                        date_alert_dialog.setView(date_dialog_view);
-                        date_alert_dialog.show();
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.show();
-            }
-        });
+        fab.setOnClickListener(fabClickListener);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -286,6 +216,189 @@ public class MainAndNavigation extends AppCompatActivity
         });
         */
 
+    }
+    EditText input;
+
+    View.OnClickListener fabClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            showInputDescriptionDialog (null);
+        }
+    };
+
+    private void showInputDescriptionDialog (String initial){
+        isEnteringText = true;
+        AlertDialog.Builder builder = new AlertDialog.Builder(th);
+        builder.setTitle(getString(R.string.enter_task));
+
+        input = new EditText(th);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                enteredText = input.getText().toString();
+                Toast toast_show_description = Toast.makeText(getApplicationContext(),
+                        enteredText, Toast.LENGTH_SHORT);
+                toast_show_description.show();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        builder.setView(input);
+        builder.setCancelable(false);
+
+        builder.setPositiveButton("OK", textOKListener);
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                isEnteringText = false;
+                enteredText = null;
+                dialog.cancel();
+            }
+        });
+        if (initial != null){
+            input.setText(initial);
+        }
+        builder.show();
+    }
+
+    View date_dialog_view;
+    AlertDialog date_alert_dialog;
+    DialogInterface.OnClickListener textOKListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            isEnteringText = false;
+            enteredText = null;
+
+            description = input.getText().toString();
+
+            isPickingDate = true;
+            showInputDateDialog(null);
+        }
+    };
+
+    private void showInputDateDialog(Date initial){
+
+        date_dialog_view = View.inflate(th, R.layout.date_layout, null);
+        date_alert_dialog = new AlertDialog.Builder(th).create();
+
+        date_dialog_view.findViewById(R.id.button_date).setOnClickListener(dateInputOKListener);
+        date_dialog_view.findViewById(R.id.button_date_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isPickingDate = false;
+                pickedDate = null;
+                date_alert_dialog.dismiss();
+            }
+        });
+        DatePicker datePicker = (DatePicker) date_dialog_view.findViewById(R.id.datePicker1);
+        if (initial!=null){
+            datePicker.updateDate(initial.getYear(), initial.getMonth(), initial.getDate());
+        }
+        /*
+        datePicker.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
+            @Override
+            public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+
+            }
+        });
+        */
+        date_alert_dialog.setView(date_dialog_view);
+        date_alert_dialog.show();
+    }
+
+    View time_dialog_view;
+    AlertDialog time_alert_dialog;
+    View.OnClickListener dateInputOKListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            isPickingDate = false;
+            DatePicker datePicker = (DatePicker) date_dialog_view.findViewById(R.id.datePicker1);
+            datetime = new Date(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+
+            Toast toast_show_date = Toast.makeText(getApplicationContext(),
+                    datetime.getYear() + "-" + datetime.getMonth() + "-" + datetime.getDate(), Toast.LENGTH_SHORT);
+            toast_show_date.show();
+
+            isPickingTime = true;
+            showInputTimeDialog(null);
+
+            date_alert_dialog.dismiss();
+
+        }
+    };
+
+    private void showInputTimeDialog(Date initial){
+        time_dialog_view = View.inflate(th, R.layout.time_layout, null);
+        time_alert_dialog = new AlertDialog.Builder(th).create();
+
+        TimePicker timepicker = (TimePicker) time_dialog_view.findViewById(R.id.timePicker1);
+        if (initial!=null){
+            //TODO
+        }
+        time_dialog_view.findViewById(R.id.button_time).setOnClickListener(timeInputOKListener);
+        time_dialog_view.findViewById(R.id.button_time_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isPickingTime = false;
+                pickedTime = null;
+                time_alert_dialog.dismiss();
+            }
+        });
+        time_alert_dialog.setView(time_dialog_view);
+        time_alert_dialog.show();
+    }
+
+    View.OnClickListener timeInputOKListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+            isPickingTime = false;
+            TimePicker timepicker = (TimePicker) time_dialog_view.findViewById(R.id.timePicker1);
+            Toast toast_show_time = Toast.makeText(getApplicationContext(),
+                    timepicker.getCurrentHour() + ":" + timepicker.getCurrentMinute(), Toast.LENGTH_SHORT);
+            toast_show_time.show();
+            datetime = new Date(datetime.getYear(), datetime.getMonth(), datetime.getDate(), timepicker.getCurrentHour().intValue(), timepicker.getCurrentMinute().intValue());
+            Toast toast_show_datetime = Toast.makeText(getApplicationContext(),
+                    ((datetime.getDate() > 9) ? (datetime.getDate()) : ("0" + datetime.getDate())) + "." + ((datetime.getMonth() > 9) ? (datetime.getMonth()) : ("0" + datetime.getMonth())) + "." + datetime.getYear() + " " + ((datetime.getHours() > 9) ? (datetime.getHours()) : ("0" + datetime.getHours())) + ":" + ((datetime.getMinutes() > 9) ? (datetime.getMinutes()) : ("0" + datetime.getMinutes())), Toast.LENGTH_LONG);
+            toast_show_datetime.show();
+            Task task = new Task(description, idCategory, ((datetime.getDate() > 9) ? (datetime.getDate()) : ("0" + datetime.getDate())) + "." + (((datetime.getMonth()+1) > 9) ? ((datetime.getMonth()+1)) : ("0" + (datetime.getMonth()+1))) + "." + datetime.getYear() + " " + ((datetime.getHours() > 9) ? (datetime.getHours()) : ("0" + datetime.getHours())) + ":" + ((datetime.getMinutes() > 9) ? (datetime.getMinutes()) : ("0" + datetime.getMinutes())));
+            //TODO: add task in firebase and get id
+            //task.setIdTask(String.valueOf(index));
+            tasks.add(task);
+
+            //fire.writeNewTask(task);
+            db.addTask(task);
+
+            index++;
+            sortAndShowTasks(layout);
+            time_alert_dialog.dismiss();
+        }
+    };
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("EnteredText", enteredText);
+
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        String entered = savedInstanceState.getString("EnteredText");
+        if (entered != null){
+            showInputDescriptionDialog (entered);
+        }
     }
 
     public boolean onPrepareOptionsMenu (Menu menu){
@@ -485,7 +598,12 @@ public class MainAndNavigation extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            //TODO CHECK
+            //super.onBackPressed();
+            Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+            homeIntent.addCategory( Intent.CATEGORY_HOME );
+            homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(homeIntent);
         }
     }
 

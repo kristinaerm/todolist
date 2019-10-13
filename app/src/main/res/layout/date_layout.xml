@@ -18,4 +18,11 @@
         android:background="@android:color/background_light"
         android:text="@string/OK" />
 
+    <Button
+        android:id="@+id/button_date_cancel"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/cancel" />
+
 </LinearLayout>

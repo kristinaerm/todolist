@@ -26,6 +26,7 @@
     <string name="enter_task_time">Enter time</string>
     <string name="enter_task_datetime">Enter date and time</string>
     <string name="OK">OK</string>
+    <string name="cancel">Cancel</string>
     <string name="title_activity_main_and_navigation">MainAndNavigation</string>
     <string name="nav_header_title">ToDoList</string>
     <string name="nav_header_subtitle">Your personal time manager</string>
