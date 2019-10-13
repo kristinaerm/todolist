@@ -44,6 +44,7 @@
     <string name="english" translatable="false">ENG</string>
     <string name="russian" translatable="false">RU</string>
     <string name="no_category">No category</string>
+    <string name="no_category_in_db">No category</string>
     <string name="todolist" translatable="false">ToDoList</string>
     <string name="notification_title">Click here to view your ToDoList…</string>
     <string name="map">Map</string>

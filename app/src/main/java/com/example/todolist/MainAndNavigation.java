@@ -93,6 +93,7 @@ public class MainAndNavigation extends AppCompatActivity
     public static int getCountForNotifications() {
         return countForNotifications;
     }
+
     public static void IncrementCountForNotifications() {
         countForNotifications++;
     }
@@ -101,6 +102,7 @@ public class MainAndNavigation extends AppCompatActivity
     public static int getCountForPendings() {
         return countForPendings;
     }
+
     public static void IncrementCountForPendings() {
         countForPendings++;
     }
@@ -143,7 +145,7 @@ public class MainAndNavigation extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Database.setUndeletableCategory(getString(R.string.no_category));
+        Database.setUndeletableCategory(getString(R.string.no_category_in_db));
 
         //Receive extras
         userId = getIntent().getStringExtra(ID_USER);
@@ -181,6 +183,7 @@ public class MainAndNavigation extends AppCompatActivity
 
         //Toolbar customization
         String categoryNameToShowInToolbarTitle = all ? getString(R.string.all_tasks) : db.getCategoryNameById(idCategory);
+        categoryNameToShowInToolbarTitle = (categoryNameToShowInToolbarTitle.equals(getString(R.string.no_category_in_db)))?getString(R.string.no_category):categoryNameToShowInToolbarTitle;
         toolbar.setTitle(categoryNameToShowInToolbarTitle);
 
     }
@@ -201,13 +204,17 @@ public class MainAndNavigation extends AppCompatActivity
         inputDescr.setInputType(InputType.TYPE_CLASS_TEXT);
         inputDescr.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 enteredText = inputDescr.getText().toString();
             }
+
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
         builder.setView(inputDescr);
         builder.setCancelable(false);
@@ -285,12 +292,12 @@ public class MainAndNavigation extends AppCompatActivity
         @Override
         public void onClick(View view) {
             isPickingDate = false;
-            
+
             DatePicker datePicker = (DatePicker) date_dialog_view.findViewById(R.id.datePicker1);
             datetime.set(Calendar.YEAR, datePicker.getYear());
             datetime.set(Calendar.MONTH, datePicker.getMonth());
             datetime.set(Calendar.DAY_OF_MONTH, datePicker.getDayOfMonth());
-            
+
             isPickingTime = true;
             showInputTimeDialog(null);
 
@@ -348,10 +355,10 @@ public class MainAndNavigation extends AppCompatActivity
 
             isPickingTime = false;
             TimePicker timepicker = (TimePicker) time_dialog_view.findViewById(R.id.timePicker1);
-            
+
             datetime.set(Calendar.HOUR_OF_DAY, timepicker.getCurrentHour().intValue());
             datetime.set(Calendar.MINUTE, timepicker.getCurrentMinute().intValue());
-            
+
             Task task = new Task(description, idCategory, ((datetime.get(Calendar.DAY_OF_MONTH) > 9) ? (datetime.get(Calendar.DAY_OF_MONTH)) : ("0" + datetime.get(Calendar.DAY_OF_MONTH))) + "." + (((datetime.get(Calendar.MONTH) + 1) > 9) ? ((datetime.get(Calendar.MONTH) + 1)) : ("0" + (datetime.get(Calendar.MONTH) + 1))) + "." + datetime.get(Calendar.YEAR) + " " + ((datetime.get(Calendar.HOUR_OF_DAY) > 9) ? (datetime.get(Calendar.HOUR_OF_DAY)) : ("0" + datetime.get(Calendar.HOUR_OF_DAY))) + ":" + ((datetime.get(Calendar.MINUTE) > 9) ? (datetime.get(Calendar.MINUTE)) : ("0" + datetime.get(Calendar.MINUTE))));
             tasks.add(task);
             db.addTask(task);
@@ -446,7 +453,7 @@ public class MainAndNavigation extends AppCompatActivity
         categories = db.getCategorybyIdUser(userId);
 
         if (categories.size() == 0) {
-            db.addNoCategory(new Category(getString(R.string.no_category), R.drawable.label, userId));
+            db.addNoCategory(new Category(getString(R.string.no_category_in_db), R.drawable.label, userId));
             categories = db.getCategorybyIdUser(userId);
         }
 
@@ -480,14 +487,14 @@ public class MainAndNavigation extends AppCompatActivity
         categories = db.getCategorybyIdUser(userId);
 
         if (categories.size() == 0) {
-            db.addNoCategory(new Category(getString(R.string.no_category), R.drawable.label, userId));
+            db.addNoCategory(new Category(getString(R.string.no_category_in_db), R.drawable.label, userId));
             categories = db.getCategorybyIdUser(userId);
         }
 
         if (idCategory.equals("")) {
             int k = 0;
 
-            while ((k < categories.size()) && (!categories.get(k).getName().equals(getString(R.string.no_category)))) {
+            while ((k < categories.size()) && (!categories.get(k).getName().equals(getString(R.string.no_category_in_db)))) {
                 k++;
             }
             if (k < categories.size())
@@ -544,6 +551,11 @@ public class MainAndNavigation extends AppCompatActivity
                 TextView label = new TextView(th);
                 label.setText(previousState);
                 label.setTextSize(20);
+                if (previousState == Task.TODAY) {
+                    label.setTextColor(getResources().getColor(R.color.colorAccent));
+                } else if (previousState == Task.EXPIRED) {
+                    label.setTextColor(getResources().getColor(R.color.colorExpired));
+                }
                 layout.addView(label, 0);
                 previousState = currentState;
             }
@@ -559,8 +571,14 @@ public class MainAndNavigation extends AppCompatActivity
         try {
             if (tasks.size() - 1 >= 0) {
                 TextView label = new TextView(th);
-                label.setText(tasks.get(tasks.size() - 1).timeline());
+                int time = tasks.get(tasks.size() - 1).timeline();
+                label.setText(time);
                 label.setTextSize(20);
+                if (time == Task.TODAY) {
+                    label.setTextColor(getResources().getColor(R.color.colorAccent));
+                } else if (time == Task.EXPIRED) {
+                    label.setTextColor(getResources().getColor(R.color.colorExpired));
+                }
                 layout.addView(label, 0);
             }
         } catch (ParseException e) {
@@ -614,13 +632,17 @@ public class MainAndNavigation extends AppCompatActivity
         inputCategory.setInputType(InputType.TYPE_CLASS_TEXT);
         inputCategory.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 enteredCategory = inputCategory.getText().toString();
             }
+
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
 
         if (initial != null) {

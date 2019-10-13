@@ -26,6 +26,7 @@
     <string name="add_category">Добавить</string>
     <string name="language">Язык интерфейса</string>
     <string name="no_category">Без категории</string>
+    <string name="no_category_in_db">No category</string>
     <string name="notification_title">Нажмите здесь для просмотра списка задач…</string>
     <string name="map">Карта</string>
     <string name="all_tasks">Все задачи</string>
