@@ -57,18 +57,30 @@ public class MainAndNavigation extends AppCompatActivity
     Firebase fire = new Firebase();
     boolean all = true;
     private Database db = new Database(this);
-    ArrayMap<Integer,String> menuCategory = new ArrayMap<>();
+    ArrayMap<Integer, String> menuCategory = new ArrayMap<>();
     //temporary
-    int index = 0;
-    Category currentCategory = new Category("1","1", R.drawable.add,"1");
     String idCategory = "";
     NotificationHelper notificationHelper;
     boolean isEnteringText = false;
     boolean isPickingDate = false;
     boolean isPickingTime = false;
+    boolean isEnteringCategory = false;
     String enteredText = null;
     Date pickedTime = null;
     Date pickedDate = null;
+    String enteredCategory = null;
+    private static int countForNotifications = 0;
+    private static int countForPendings = 0;
+    LinkedList<AlarmManager> alarmManagers = new LinkedList<>();
+    LinkedList<PendingIntent> pendingIntents = new LinkedList<>();
+    View date_dialog_view;
+    AlertDialog date_alert_dialog;
+    DatePicker datePicker1;
+    View time_dialog_view;
+    AlertDialog time_alert_dialog;
+    EditText inputDescr;
+    EditText inputCategory;
+
 
 
     /*
@@ -78,7 +90,6 @@ public class MainAndNavigation extends AppCompatActivity
     }
     */
 
-    private static int countForNotifications = 0;
 
     public static int getCountForNotifications() {
         return countForNotifications;
@@ -88,7 +99,6 @@ public class MainAndNavigation extends AppCompatActivity
         countForNotifications++;
     }
 
-    private static int countForPendings = 0;
 
     public static int getCountForPendings() {
         return countForPendings;
@@ -98,32 +108,30 @@ public class MainAndNavigation extends AppCompatActivity
         countForPendings++;
     }
 
-    LinkedList<AlarmManager> alarmManagers = new LinkedList<>();
-    LinkedList<PendingIntent> pendingIntents = new LinkedList<>();
 
-    private void startAlarm (Calendar c, String title, String text){
+    private void startAlarm(Calendar c, String title, String text) {
         if (c.before(Calendar.getInstance())) return;
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManagers.add(alarmManager);
         Intent intent = new Intent(this, AlertReceiver.class);
         intent.putExtra("title", title);
         intent.putExtra("text", text);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, getCountForPendings(), intent, PendingIntent.FLAG_UPDATE_CURRENT );
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, getCountForPendings(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         pendingIntents.add(pendingIntent);
         IncCount1();
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),pendingIntent);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
 
     }
 
-    private void cancelAlarms(){
+    private void cancelAlarms() {
 
         //TODO check
-        for (int i = 0; i<tasks.size(); i++){
+        for (int i = 0; i < tasks.size(); i++) {
             //try{
-                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                Intent intent = new Intent(this, AlertReceiver.class);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(this,i, intent, 0);
-                alarmManager.cancel(pendingIntent);
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(this, AlertReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, i, intent, 0);
+            alarmManager.cancel(pendingIntent);
             //} catch (IndexOutOfBoundsException ex){
 
             //}
@@ -179,7 +187,6 @@ public class MainAndNavigation extends AppCompatActivity
 */
 
 
-
         sortAndShowTasks(layout);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -217,23 +224,24 @@ public class MainAndNavigation extends AppCompatActivity
         */
 
     }
-    EditText input;
+
 
     View.OnClickListener fabClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            showInputDescriptionDialog (null);
+            showInputDescriptionDialog(null);
         }
     };
 
-    private void showInputDescriptionDialog (String initial){
+    private void showInputDescriptionDialog(String initial) {
         isEnteringText = true;
         AlertDialog.Builder builder = new AlertDialog.Builder(th);
         builder.setTitle(getString(R.string.enter_task));
+        //enteredText = "";
 
-        input = new EditText(th);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        input.addTextChangedListener(new TextWatcher() {
+        inputDescr = new EditText(th);
+        inputDescr.setInputType(InputType.TYPE_CLASS_TEXT);
+        inputDescr.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -241,7 +249,7 @@ public class MainAndNavigation extends AppCompatActivity
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                enteredText = input.getText().toString();
+                enteredText = inputDescr.getText().toString();
                 Toast toast_show_description = Toast.makeText(getApplicationContext(),
                         enteredText, Toast.LENGTH_SHORT);
                 toast_show_description.show();
@@ -252,7 +260,7 @@ public class MainAndNavigation extends AppCompatActivity
 
             }
         });
-        builder.setView(input);
+        builder.setView(inputDescr);
         builder.setCancelable(false);
 
         builder.setPositiveButton("OK", textOKListener);
@@ -264,29 +272,30 @@ public class MainAndNavigation extends AppCompatActivity
                 dialog.cancel();
             }
         });
-        if (initial != null){
-            input.setText(initial);
+        if (initial != null) {
+            inputDescr.setText(initial);
         }
         builder.show();
     }
 
-    View date_dialog_view;
-    AlertDialog date_alert_dialog;
+
     DialogInterface.OnClickListener textOKListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             isEnteringText = false;
             enteredText = null;
 
-            description = input.getText().toString();
+            description = inputDescr.getText().toString();
 
             isPickingDate = true;
             showInputDateDialog(null);
         }
     };
 
-    private void showInputDateDialog(Date initial){
 
+    private void showInputDateDialog(Date initial) {
+        isEnteringText = false;
+        enteredText = null;
         date_dialog_view = View.inflate(th, R.layout.date_layout, null);
         date_alert_dialog = new AlertDialog.Builder(th).create();
 
@@ -296,27 +305,32 @@ public class MainAndNavigation extends AppCompatActivity
             public void onClick(View v) {
                 isPickingDate = false;
                 pickedDate = null;
+                isEnteringText = false;
+                enteredText = null;
                 date_alert_dialog.dismiss();
             }
         });
-        DatePicker datePicker = (DatePicker) date_dialog_view.findViewById(R.id.datePicker1);
-        if (initial!=null){
-            datePicker.updateDate(initial.getYear(), initial.getMonth(), initial.getDate());
-        }
-        /*
-        datePicker.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
-            @Override
-            public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        datePicker1 = (DatePicker) date_dialog_view.findViewById(R.id.datePicker1);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        //pickedDate = new Date(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+        datePicker1.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
 
+            @Override
+            public void onDateChanged(DatePicker datePicker, int year, int month, int dayOfMonth) {
+
+                pickedDate = new Date(year, month, dayOfMonth);
             }
         });
-        */
+        if (initial != null) {
+            datePicker1.updateDate(initial.getYear(), initial.getMonth(), initial.getDate());
+        }
+        date_alert_dialog.setCancelable(false);
         date_alert_dialog.setView(date_dialog_view);
         date_alert_dialog.show();
     }
 
-    View time_dialog_view;
-    AlertDialog time_alert_dialog;
+
     View.OnClickListener dateInputOKListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -336,23 +350,44 @@ public class MainAndNavigation extends AppCompatActivity
         }
     };
 
-    private void showInputTimeDialog(Date initial){
+    private void showInputTimeDialog(Date initial) {
+        isPickingDate = false;
+        pickedDate = null;
+        isEnteringText = false;
+        enteredText = null;
+
         time_dialog_view = View.inflate(th, R.layout.time_layout, null);
         time_alert_dialog = new AlertDialog.Builder(th).create();
 
         TimePicker timepicker = (TimePicker) time_dialog_view.findViewById(R.id.timePicker1);
-        if (initial!=null){
-            //TODO
+        timepicker.setIs24HourView(true);
+        if (initial != null) {
+            timepicker.setCurrentHour(new Integer(initial.getHours()));
+            timepicker.setCurrentMinute(new Integer(initial.getMinutes()));
         }
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(System.currentTimeMillis());
+        //pickedTime = new Date(c.get(Calendar.YEAR),c.get(Calendar.MONTH),c.get(Calendar.DAY_OF_MONTH),c.get(Calendar.HOUR),c.get(Calendar.MINUTE));
+        timepicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+            @Override
+            public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+                pickedTime = new Date(2019, 1, 1, hourOfDay, minute);
+            }
+        });
         time_dialog_view.findViewById(R.id.button_time).setOnClickListener(timeInputOKListener);
         time_dialog_view.findViewById(R.id.button_time_cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 isPickingTime = false;
                 pickedTime = null;
+                isPickingDate = false;
+                pickedDate = null;
+                isEnteringText = false;
+                enteredText = null;
                 time_alert_dialog.dismiss();
             }
         });
+        time_alert_dialog.setCancelable(false);
         time_alert_dialog.setView(time_dialog_view);
         time_alert_dialog.show();
     }
@@ -370,62 +405,128 @@ public class MainAndNavigation extends AppCompatActivity
             Toast toast_show_datetime = Toast.makeText(getApplicationContext(),
                     ((datetime.getDate() > 9) ? (datetime.getDate()) : ("0" + datetime.getDate())) + "." + ((datetime.getMonth() > 9) ? (datetime.getMonth()) : ("0" + datetime.getMonth())) + "." + datetime.getYear() + " " + ((datetime.getHours() > 9) ? (datetime.getHours()) : ("0" + datetime.getHours())) + ":" + ((datetime.getMinutes() > 9) ? (datetime.getMinutes()) : ("0" + datetime.getMinutes())), Toast.LENGTH_LONG);
             toast_show_datetime.show();
-            Task task = new Task(description, idCategory, ((datetime.getDate() > 9) ? (datetime.getDate()) : ("0" + datetime.getDate())) + "." + (((datetime.getMonth()+1) > 9) ? ((datetime.getMonth()+1)) : ("0" + (datetime.getMonth()+1))) + "." + datetime.getYear() + " " + ((datetime.getHours() > 9) ? (datetime.getHours()) : ("0" + datetime.getHours())) + ":" + ((datetime.getMinutes() > 9) ? (datetime.getMinutes()) : ("0" + datetime.getMinutes())));
+            Task task = new Task(description, idCategory, ((datetime.getDate() > 9) ? (datetime.getDate()) : ("0" + datetime.getDate())) + "." + (((datetime.getMonth() + 1) > 9) ? ((datetime.getMonth() + 1)) : ("0" + (datetime.getMonth() + 1))) + "." + datetime.getYear() + " " + ((datetime.getHours() > 9) ? (datetime.getHours()) : ("0" + datetime.getHours())) + ":" + ((datetime.getMinutes() > 9) ? (datetime.getMinutes()) : ("0" + datetime.getMinutes())));
             //TODO: add task in firebase and get id
-            //task.setIdTask(String.valueOf(index));
             tasks.add(task);
 
             //fire.writeNewTask(task);
             db.addTask(task);
 
-            index++;
             sortAndShowTasks(layout);
             time_alert_dialog.dismiss();
         }
     };
 
+    private static final String ENTERED_TEXT = "EnteredText";
+    private static final String ENTERED_DATE = "EnteredDate";
+    private static final String ENTERED_TIME = "EnteredTime";
+    private static final String ENTERED_CATEGORY = "EnteredCategory";
+    private static final String IS_ENTERING_TEXT = "IsEnteringText";
+    private static final String IS_ENTERING_DATE = "IsEnteringDate";
+    private static final String IS_ENTERING_TIME = "IsEnteringTime";
+    private static final String IS_ENTERING_CATEGORY = "IsEnteringCategory";
+    private static final String DESCRIPTION = "Description";
+    private static final String NAME_CATEGORY = "NameCategory";
+    private static final String DATETIME = "DateTime";
+    private static final String USER_ID = "UserId";
+    private static final String ALL = "All";
+    private static final String ID_CATEGORY = "IdCategory";
+    private static final String COUNT_FOR_PENDING = "CountForPend";
+    private static final String COUNT_FOR_NOTIFICATION = "CountForNotif";
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("EnteredText", enteredText);
+        outState.putString(ENTERED_TEXT, enteredText);
+        outState.putSerializable(ENTERED_DATE, pickedDate);
+        outState.putSerializable(ENTERED_TIME, pickedTime);
+        outState.putString(ENTERED_CATEGORY, enteredCategory);
+        outState.putBoolean(IS_ENTERING_CATEGORY, isEnteringCategory);
+        outState.putBoolean(IS_ENTERING_TEXT, isEnteringText);
+        outState.putBoolean(IS_ENTERING_DATE, isPickingDate);
+        outState.putBoolean(IS_ENTERING_TIME, isPickingTime);
+        outState.putString(DESCRIPTION, description);
+        outState.putString(NAME_CATEGORY, nameCategory);
+        outState.putSerializable(DATETIME, datetime);
+        outState.putString(USER_ID, userId);
+        outState.putBoolean(ALL, all);
+        outState.putString(ID_CATEGORY, idCategory);
+        outState.putInt(COUNT_FOR_PENDING, countForPendings);
+        outState.putInt(COUNT_FOR_NOTIFICATION, countForNotifications);
 
+
+        cancelAlarms();
 
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        String entered = savedInstanceState.getString("EnteredText");
-        if (entered != null){
-            showInputDescriptionDialog (entered);
+
+        description = savedInstanceState.getString(DESCRIPTION);
+        nameCategory = savedInstanceState.getString(NAME_CATEGORY);
+        userId = savedInstanceState.getString(USER_ID);
+        idCategory = savedInstanceState.getString(ID_CATEGORY);
+        countForPendings = savedInstanceState.getInt(COUNT_FOR_PENDING);
+        countForNotifications = savedInstanceState.getInt(COUNT_FOR_NOTIFICATION);
+        datetime = (Date) savedInstanceState.getSerializable(DATETIME);
+        all = savedInstanceState.getBoolean(ALL);
+        isEnteringCategory = savedInstanceState.getBoolean(IS_ENTERING_CATEGORY);
+        isEnteringText = savedInstanceState.getBoolean(IS_ENTERING_TEXT);
+        isPickingDate = savedInstanceState.getBoolean(IS_ENTERING_DATE);
+        isPickingTime = savedInstanceState.getBoolean(IS_ENTERING_TIME);
+
+        sortAndShowTasks(layout);
+
+        String entered = savedInstanceState.getString(ENTERED_TEXT);
+        if (isEnteringText) {
+            enteredText = entered;
+            showInputDescriptionDialog(entered);
         }
+        Date enteredDate = (Date) savedInstanceState.getSerializable(ENTERED_DATE);
+        if (isPickingDate ) {
+            pickedDate = enteredDate;
+            showInputDateDialog(enteredDate);
+        }
+        Date enteredTime = (Date) savedInstanceState.getSerializable(ENTERED_TIME);
+        if (isPickingTime) {
+            pickedTime = enteredTime;
+            showInputTimeDialog(enteredTime);
+        }
+        String enteredCat = savedInstanceState.getString(ENTERED_CATEGORY);
+        if (isEnteringCategory) {
+            enteredCategory = enteredCat;
+            showInputCategoryDialog(enteredCat);
+        }
+
+
     }
 
-    public boolean onPrepareOptionsMenu (Menu menu){
+    public boolean onPrepareOptionsMenu(Menu menu) {
 
         Toast toast_inside_prepareOptionsMenu = Toast.makeText(getApplicationContext(),
-                "inside "+subMenu.size(), Toast.LENGTH_SHORT);
+                "inside " + subMenu.size(), Toast.LENGTH_SHORT);
         toast_inside_prepareOptionsMenu.show();
 
         categories = db.getCategorybyIdUser(userId);
-        if (categories.size()==0){
+        if (categories.size() == 0) {
             db.addNoCategory(new Category(getString(R.string.no_category), R.drawable.label, userId));
             categories = db.getCategorybyIdUser(userId);
         }
 
         int s = menuCategory.size();
-        if (subMenu.size()>2){
-            for (int i=0; i< s; i++){
+        if (subMenu.size() > 2) {
+            for (int i = 0; i < s; i++) {
                 int id = subMenu.getItem(0).getItemId();
                 subMenu.removeItem(id);
                 menuCategory.remove(0);
             }
         }
         //TODO: firebase upload categories
-        for (int i=0; i< categories.size(); i++){
+        for (int i = 0; i < categories.size(); i++) {
             //TODO: clear except nocategory and add new categories
-            menuCategory.put(i,categories.get(i).getIdCategory());
-            subMenu.add(R.id.nav_group_categories,i, Menu.NONE, categories.get(i).getName()).setIcon(getResources().getDrawable(R.drawable.label));
+            menuCategory.put(i, categories.get(i).getIdCategory());
+            subMenu.add(R.id.nav_group_categories, i, Menu.NONE, categories.get(i).getName()).setIcon(getResources().getDrawable(R.drawable.label));
             // установить как-то айди categories.get(i).getIdCategory()
         }
 
@@ -472,9 +573,9 @@ public class MainAndNavigation extends AppCompatActivity
         }
     };
 
-    public void sortAndShowTasks(final LinearLayout linearLayout){
-        int previousState=0;
-        int currentState=0;
+    public void sortAndShowTasks(final LinearLayout linearLayout) {
+        int previousState = 0;
+        int currentState = 0;
         linearLayout.removeAllViews();
         cancelAlarms();
         tasks.clear();
@@ -487,23 +588,23 @@ public class MainAndNavigation extends AppCompatActivity
 */
         categories = db.getCategorybyIdUser(userId);
 
-        if (categories.size()==0){
+        if (categories.size() == 0) {
             db.addNoCategory(new Category(getString(R.string.no_category), R.drawable.label, userId));
             categories = db.getCategorybyIdUser(userId);
         }
 
 
-        if (idCategory.equals("")){
-            int k =0;
+        if (idCategory.equals("")) {
+            int k = 0;
 
-            while ((k<categories.size())&&(!categories.get(k).getName().equals(getString(R.string.no_category)))){
+            while ((k < categories.size()) && (!categories.get(k).getName().equals(getString(R.string.no_category)))) {
                 k++;
             }
-            if (k<categories.size())
-                idCategory=categories.get(k).getIdCategory();
+            if (k < categories.size())
+                idCategory = categories.get(k).getIdCategory();
         }
 
-        if (all){
+        if (all) {
             //for (int i=0; i<categories.size(); i++){
                 /*
                 Query query = FirebaseDatabase.getInstance().getReference("task:")
@@ -511,9 +612,9 @@ public class MainAndNavigation extends AppCompatActivity
                         .equalTo(categories.get(i).getIdCategory());
                 query.addListenerForSingleValueEvent(valueEventListenerTasks);
                 */
-                for (int i=0; i<categories.size(); i++){
-                    db.getTasksByCategory(categories.get(i).getIdCategory(), tasks);
-                }
+            for (int i = 0; i < categories.size(); i++) {
+                db.getTasksByCategory(categories.get(i).getIdCategory(), tasks);
+            }
             //}
         } else {
             /*
@@ -534,14 +635,14 @@ public class MainAndNavigation extends AppCompatActivity
         Task curr;
         try {
             //TODO проверка не пуст ли
-            if(tasks.size()!=0){
+            if (tasks.size() != 0) {
                 previousState = tasks.get(0).timeline();
             }
 
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        for (int i=0; i<tasks.size(); i++){
+        for (int i = 0; i < tasks.size(); i++) {
             curr = tasks.get(i);
             try {
                 currentState = tasks.get(i).timeline();
@@ -555,7 +656,7 @@ public class MainAndNavigation extends AppCompatActivity
                     if (isChecked) {
                         //TODO: delete task from firebase by tag
                         linearLayout.removeView(buttonView);
-                        db.deleteTask((String)buttonView.getTag());
+                        db.deleteTask((String) buttonView.getTag());
                         sortAndShowTasks(layout);
                     }
                 }
@@ -564,24 +665,24 @@ public class MainAndNavigation extends AppCompatActivity
             checkbox.setText(curr.toString());
             checkbox.setTag(curr.getIdTask());
             //checkbox.setId(Integer.parseInt(curr.getIdTask()));
-            if(previousState!=currentState){
+            if (previousState != currentState) {
                 TextView label = new TextView(th);
                 label.setText(previousState);
                 label.setTextSize(20);
-                layout.addView(label,0);
-                previousState=currentState;
+                layout.addView(label, 0);
+                previousState = currentState;
             }
             linearLayout.addView(checkbox, 0);
 
 
             try {
-                startAlarm(curr.getTimeDateCalendar(),curr.toString(), getString(R.string.notification_title));
+                startAlarm(curr.getTimeDateCalendar(), curr.toString(), getString(R.string.notification_title));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
         try {
-            if (tasks.size()-1>=0) {
+            if (tasks.size() - 1 >= 0) {
                 TextView label = new TextView(th);
                 label.setText(tasks.get(tasks.size() - 1).timeline());
                 label.setTextSize(20);
@@ -601,7 +702,7 @@ public class MainAndNavigation extends AppCompatActivity
             //TODO CHECK
             //super.onBackPressed();
             Intent homeIntent = new Intent(Intent.ACTION_MAIN);
-            homeIntent.addCategory( Intent.CATEGORY_HOME );
+            homeIntent.addCategory(Intent.CATEGORY_HOME);
             homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(homeIntent);
         }
@@ -630,6 +731,55 @@ public class MainAndNavigation extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    private void showInputCategoryDialog(String initial) {
+        isEnteringCategory = true;
+        AlertDialog.Builder category_builder = new AlertDialog.Builder(th);
+        category_builder.setTitle(getString(R.string.enter_category));
+        //enteredCategory = "";
+
+        inputCategory = new EditText(th);
+        inputCategory.setInputType(InputType.TYPE_CLASS_TEXT);
+        inputCategory.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                enteredCategory = inputCategory.getText().toString();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        if (initial != null) {
+            inputCategory.setText(initial);
+        }
+        category_builder.setView(inputCategory);
+
+        category_builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                enteredCategory = null;
+                isEnteringCategory = false;
+                nameCategory = inputCategory.getText().toString();
+                db.addCategory(new Category(nameCategory, R.drawable.label, userId));
+                invalidateOptionsMenu();
+            }
+        });
+        category_builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int arg1) {
+                enteredCategory = null;
+                isEnteringCategory = false;
+                dialog.cancel();
+            }
+        });
+        category_builder.show();
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -637,34 +787,13 @@ public class MainAndNavigation extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_all_tasks) {
-            all=true;
-            idCategory="";
+            all = true;
+            idCategory = "";
             sortAndShowTasks(layout);
         } else if (id == R.id.nav_add_category) {
 
             //TODO добавить добавление категории в фаей и базу и обновить меню
-            final AlertDialog.Builder builder = new AlertDialog.Builder(th);
-            builder.setTitle(getString(R.string.enter_category));
-
-            final EditText input = new EditText(th);
-            input.setInputType(InputType.TYPE_CLASS_TEXT);
-            builder.setView(input);
-
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    nameCategory = input.getText().toString();
-                    db.addCategory(new Category(nameCategory,R.drawable.label,userId));
-                    invalidateOptionsMenu();
-                }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int arg1) {
-                    dialog.cancel();
-                }
-            });
-            AlertDialog alert = builder.create();
-            alert.show();
+            showInputCategoryDialog(null);
 
         } else if (id == R.id.nav_change_category) {
             Intent intent = new Intent(this, ChangeCategoryActivity.class);
@@ -672,8 +801,8 @@ public class MainAndNavigation extends AppCompatActivity
             startActivity(intent);
         } else {
             String catId = menuCategory.get(id);
-            all=false;
-            idCategory=catId;
+            all = false;
+            idCategory = catId;
             sortAndShowTasks(layout);
         }
 
