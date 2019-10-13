@@ -139,6 +139,19 @@ public class Database extends SQLiteOpenHelper {
         return task;
     }
 
+    public String getCategoryNameById(String id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_CATEGORY, new String[]{
+                        "name"}, "idCategory" + "=?",
+                new String[]{String.valueOf(id)}, null, null, null, null);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        return cursor.getString(0);
+    }
+
     public Category getCategory(String id) {
         SQLiteDatabase db = this.getReadableDatabase();
 

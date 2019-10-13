@@ -80,6 +80,7 @@ public class MainAndNavigation extends AppCompatActivity
     AlertDialog time_alert_dialog;
     EditText inputDescr;
     EditText inputCategory;
+    Toolbar toolbar;
 
 
 
@@ -144,7 +145,7 @@ public class MainAndNavigation extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_and_navigation);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
@@ -222,6 +223,8 @@ public class MainAndNavigation extends AppCompatActivity
             }
         });
         */
+        String catName = all?getString(R.string.all_tasks):db.getCategoryNameById(idCategory);
+        toolbar.setTitle(catName);
 
     }
 
@@ -455,7 +458,7 @@ public class MainAndNavigation extends AppCompatActivity
         outState.putInt(COUNT_FOR_NOTIFICATION, countForNotifications);
 
 
-        cancelAlarms();
+        //cancelAlarms();
 
     }
 
@@ -579,6 +582,9 @@ public class MainAndNavigation extends AppCompatActivity
         linearLayout.removeAllViews();
         cancelAlarms();
         tasks.clear();
+
+        String catName = all?getString(R.string.all_tasks):db.getCategoryNameById(idCategory);
+        toolbar.setTitle(catName);
 
 /*
         Query query1 = FirebaseDatabase.getInstance().getReference("category:")
@@ -799,6 +805,8 @@ public class MainAndNavigation extends AppCompatActivity
             Intent intent = new Intent(this, ChangeCategoryActivity.class);
             intent.putExtra("idUser", userId);//передаю в изменение активити id пользователя который вошел
             startActivity(intent);
+        } else if (id == R.id.nav_maps) {
+            //TODO maps
         } else {
             String catId = menuCategory.get(id);
             all = false;

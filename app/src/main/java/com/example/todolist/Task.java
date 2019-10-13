@@ -12,6 +12,7 @@ import java.util.List;
 
 @IgnoreExtraProperties
 public class Task {
+
     public static final int EXPIRED = R.string.expired;
     public static final int TODAY = R.string.today;
     public static final int TOMORROW = R.string.tomorrow;
@@ -21,6 +22,7 @@ public class Task {
     private String idTask;
     private String idCategory;
     private String timeDate;
+
 
     public Task() {
 
@@ -43,6 +45,7 @@ public class Task {
         this.timeDate = timeDate;
 
     }
+
 
     public String getName() {
         return this.name;
@@ -69,6 +72,7 @@ public class Task {
     public void setIdCategory(String idCategory) {
         this.idCategory = idCategory;
     }
+
 
     public Calendar getTimeDateCalendar() throws ParseException {
         Calendar c = Calendar.getInstance();
@@ -133,23 +137,23 @@ public class Task {
             if (today.getMonth() > thisDate.getMonth()) {
                 return EXPIRED;
             } else if (today.getMonth() < thisDate.getMonth()) {
-                if (thisDate.getMonth()-today.getMonth()==1){
+                if (thisDate.getMonth() - today.getMonth() == 1) {
                     int iYear = today.getYear();
                     int iMonth = today.getMonth(); // 1 (months begin with 0)
                     int iDay = 1;
                     Calendar mycal = new GregorianCalendar(iYear, iMonth, iDay);
                     int daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
-                    if ((today.getDate()==daysInMonth)&&(thisDate.getDate()==1)){
-                        return  TOMORROW;
+                    if ((today.getDate() == daysInMonth) && (thisDate.getDate() == 1)) {
+                        return TOMORROW;
                     }
                 }
                 return LATER;
             } else {
                 //day
-                if (today.getDate() > thisDate.getDate()) {
+                if ((today.getDate() > thisDate.getDate())||(today.getHours()>thisDate.getHours())||((today.getHours()==thisDate.getHours())&&(today.getMinutes()>thisDate.getMinutes()))) {
                     return EXPIRED;
                 } else if (today.getDate() < thisDate.getDate()) {
-                    if (thisDate.getDate()-today.getDate()==1){
+                    if (thisDate.getDate() - today.getDate() == 1) {
                         return TOMORROW;
                     }
                     return LATER;
