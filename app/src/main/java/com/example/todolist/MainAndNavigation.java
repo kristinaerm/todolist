@@ -31,15 +31,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.LinkedList;
 
 public class MainAndNavigation extends AppCompatActivity
@@ -602,8 +596,8 @@ public class MainAndNavigation extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            //TODO: Settings of language
+        if (id == R.id.action_settings_log_out) {
+            //TODO: Settings of log out
             return true;
         }
 
