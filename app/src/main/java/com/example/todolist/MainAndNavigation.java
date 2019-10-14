@@ -183,7 +183,7 @@ public class MainAndNavigation extends AppCompatActivity
 
         //Toolbar customization
         String categoryNameToShowInToolbarTitle = all ? getString(R.string.all_tasks) : db.getCategoryNameById(idCategory);
-        categoryNameToShowInToolbarTitle = (categoryNameToShowInToolbarTitle.equals(getString(R.string.no_category_in_db)))?getString(R.string.no_category):categoryNameToShowInToolbarTitle;
+        categoryNameToShowInToolbarTitle = (categoryNameToShowInToolbarTitle.equals(getString(R.string.no_category_in_db))) ? getString(R.string.no_category) : categoryNameToShowInToolbarTitle;
         toolbar.setTitle(categoryNameToShowInToolbarTitle);
 
     }
@@ -462,14 +462,14 @@ public class MainAndNavigation extends AppCompatActivity
         }
         for (int i = 0; i < categories.size(); i++) {
             menuCategory.put(i, categories.get(i).getIdCategory());
-            String categoryNameToShow = (categories.get(i).getName().equals(getString(R.string.no_category_in_db)))?getString(R.string.no_category):categories.get(i).getName();
+            String categoryNameToShow = (categories.get(i).getName().equals(getString(R.string.no_category_in_db))) ? getString(R.string.no_category) : categories.get(i).getName();
             subMenu.add(R.id.nav_group_categories, i, Menu.NONE, categoryNameToShow).setIcon(getResources().getDrawable(R.drawable.label));
         }
 
         return true;
     }
 
-    public int clearMenu (Menu menu, ArrayMap<Integer, String> menuCat){
+    public int clearMenu(Menu menu, ArrayMap<Integer, String> menuCat) {
         int s = menuCat.size();
         for (int i = 0; i < s; i++) {
             int id = menu.getItem(0).getItemId();
@@ -477,6 +477,17 @@ public class MainAndNavigation extends AppCompatActivity
             menuCat.remove(0);
         }
         return menuCat.size();
+    }
+
+    public static String findNoCategoryId(LinkedList<Category> categoriesList, String noCategoryName) {
+        int k = 0;
+
+        while ((k < categoriesList.size()) && (!categoriesList.get(k).getName().equals(noCategoryName))) {
+            k++;
+        }
+        if (k < categoriesList.size())
+            return categoriesList.get(k).getIdCategory();
+        return null;
     }
 
     public void sortAndShowTasks(final LinearLayout linearLayout) {
@@ -498,13 +509,7 @@ public class MainAndNavigation extends AppCompatActivity
         }
 
         if (idCategory.equals("")) {
-            int k = 0;
-
-            while ((k < categories.size()) && (!categories.get(k).getName().equals(getString(R.string.no_category_in_db)))) {
-                k++;
-            }
-            if (k < categories.size())
-                idCategory = categories.get(k).getIdCategory();
+            idCategory = findNoCategoryId(categories, getString(R.string.no_category_in_db));
         }
 
         if (all) {
