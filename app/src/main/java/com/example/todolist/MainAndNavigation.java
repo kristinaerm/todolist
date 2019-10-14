@@ -457,20 +457,26 @@ public class MainAndNavigation extends AppCompatActivity
             categories = db.getCategorybyIdUser(userId);
         }
 
-        int s = menuCategory.size();
         if (subMenu.size() > 2) {
-            for (int i = 0; i < s; i++) {
-                int id = subMenu.getItem(0).getItemId();
-                subMenu.removeItem(id);
-                menuCategory.remove(0);
-            }
+            clearMenu(subMenu, menuCategory);
         }
         for (int i = 0; i < categories.size(); i++) {
             menuCategory.put(i, categories.get(i).getIdCategory());
-            subMenu.add(R.id.nav_group_categories, i, Menu.NONE, categories.get(i).getName()).setIcon(getResources().getDrawable(R.drawable.label));
+            String categoryNameToShow = (categories.get(i).getName().equals(getString(R.string.no_category_in_db)))?getString(R.string.no_category):categories.get(i).getName();
+            subMenu.add(R.id.nav_group_categories, i, Menu.NONE, categoryNameToShow).setIcon(getResources().getDrawable(R.drawable.label));
         }
 
         return true;
+    }
+
+    public int clearMenu (Menu menu, ArrayMap<Integer, String> menuCat){
+        int s = menuCat.size();
+        for (int i = 0; i < s; i++) {
+            int id = menu.getItem(0).getItemId();
+            menu.removeItem(id);
+            menuCat.remove(0);
+        }
+        return menuCat.size();
     }
 
     public void sortAndShowTasks(final LinearLayout linearLayout) {

@@ -41,7 +41,7 @@ public class ChangeCategoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_category);
-        idUser = getIntent().getStringExtra("idUser");
+        idUser = getIntent().getStringExtra(MainAndNavigation.ID_USER);
         recyclerView = findViewById(R.id.recyclerView);
 
 
