@@ -45,7 +45,7 @@ public class DataAdapterCategoryList extends RecyclerView.Adapter<DataAdapterCat
     public void onBindViewHolder(DataAdapterCategoryList.ViewHolder holder, int position) {
         final Category category = categoryList.get(position);
 
-        holder.imageView.setImageResource(category.getIdIcon());
+        holder.imageView.setImageResource(R.drawable.label);
         holder.nameView.setText(category.getName());
         holder.nameView.setTextSize(18);
 
