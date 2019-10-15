@@ -204,8 +204,8 @@ public class MainAndNavigation extends AppCompatActivity
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseAuth. getInstance (). signOut ();
-                Intent intent = new Intent(MainAndNavigation.this, EmailPassowordActivity.class);
+              //  FirebaseAuth. getInstance (). signOut ();
+                Intent intent = new Intent(MainAndNavigation.this, MapActivity.class);
                 startActivity(intent);
             }
         });
