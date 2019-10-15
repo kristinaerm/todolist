@@ -1,14 +1,15 @@
 package com.example.todolist;
 
+import android.Manifest;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.PointF;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.routing.OSRMRoadManager;
@@ -23,7 +24,6 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class MapActivity extends AppCompatActivity {
@@ -32,8 +32,6 @@ public class MapActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    /*    MapKitFactory.setApiKey("a20243e2-e394-4f01-ad34-38e7e979cc8a");
-        MapKitFactory.initialize(this);*/
 
         Context ctx = getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
@@ -46,31 +44,45 @@ public class MapActivity extends AppCompatActivity {
         map.setMultiTouchControls(true);
         IMapController mapController = map.getController();
         mapController.setZoom(9.5);
-        GeoPoint startPoint = new GeoPoint(53.1110, 50.0715);
-        mapController.setCenter(startPoint);
+
 
         MyLocationNewOverlay mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(MapActivity.this), map);
 
+
         mLocationOverlay.enableMyLocation();
+
+        GeoPoint startPoint = new GeoPoint(51.0, 51.0);
+        LocationManager lm;
+
+        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        Location lastKnownLoc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        if (lastKnownLoc != null) {
+            int longTemp = (int) (lastKnownLoc.getLongitude() * 1000000);
+            int latTemp = (int) (lastKnownLoc.getLatitude() * 1000000);
+            startPoint = new GeoPoint(latTemp, longTemp);
+        }
+
+
+        mapController.setCenter(startPoint);
         map.getOverlays().add(mLocationOverlay);
         ArrayList<GeoPoint> geoPoints = new ArrayList<GeoPoint>();
         geoPoints.add(startPoint);
 
-        GeoPoint endPoint = new GeoPoint(53.211962,50.177502);
+        GeoPoint endPoint = new GeoPoint(53.211962, 50.177502);
         geoPoints.add(endPoint);
-//add your points here
-   //     Polyline line = new Polyline();   //see note below!
-//        line.setPoints(geoPoints);
-//        line.setOnClickListener(new Polyline.OnClickListener() {
-//            @Override
-//            public boolean onClick(Polyline polyline, MapView mapView, GeoPoint eventPos) {
-//                //Toast.makeText(mapView.getContext(), "polyline with " + polyline.getPoints().size() + "pts was tapped", Toast.LENGTH_LONG).show();
-//                return false;
-//            }
-//        });
-//        map.getOverlayManager().add(line);
         OSRMRoadManager osrmRoadManager = new OSRMRoadManager(this);
-        //osrmRoadManager.setService("https");
         RoadManager roadManager = osrmRoadManager;
         Road road = roadManager.getRoad(geoPoints);
         Polyline roadOverlay = RoadManager.buildRoadOverlay(road);
