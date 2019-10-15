@@ -13,7 +13,7 @@
         completions."
     </string>
     <string name="title_activity_main" translatable="false">MainActivity</string>
-    <string name="title_activity_category" translatable="false">CategoryActivity</string>
+    <string name="title_activity_category">Categories</string>
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
     <string name="action_settings">Log out</string>
@@ -50,9 +50,7 @@
     <string name="map">Map</string>
 
     <!-- Strings related to EmailPasswordActivity -->
-    <string name="registration">Registration</string>
-    <string name="singin">Sing in</string>
-
     <!-- Strings related to ChangeActivity -->
-    <string name="titelChange">Change category of notes</string>
+    <string name="registration">Sign up</string>
+    <string name="title_change">Change list of categories</string>
 </resources>

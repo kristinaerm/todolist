@@ -30,4 +30,7 @@
     <string name="notification_title">Нажмите здесь для просмотра списка задач…</string>
     <string name="map">Карта</string>
     <string name="all_tasks">Все задачи</string>
+    <string name="registration">Зарегистрироваться</string>
+    <string name="title_change">Изменить список категорий</string>
+    <string name="title_activity_category" translatable="false">Cписок категорий</string>
 </resources>

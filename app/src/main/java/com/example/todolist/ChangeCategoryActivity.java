@@ -55,7 +55,7 @@ public class ChangeCategoryActivity extends AppCompatActivity {
         recyclerView.setAdapter(dataAdapterCategoryList);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(R.string.titelChange);
+        getSupportActionBar().setTitle(R.string.title_activity_category);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

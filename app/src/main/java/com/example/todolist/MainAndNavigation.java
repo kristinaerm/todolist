@@ -5,9 +5,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -24,7 +21,6 @@ import android.util.ArrayMap;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -32,13 +28,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
+
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
+
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -167,9 +159,9 @@ public class MainAndNavigation extends AppCompatActivity
 
         //FAB customization
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        Drawable myFabSrc = getResources().getDrawable(android.R.drawable.ic_input_add);
-        myFabSrc.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-        fab.setImageDrawable(myFabSrc);
+        //Drawable myFabSrc = getResources().getDrawable(android.R.drawable.ic_input_add);
+        //myFabSrc.setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+        //fab.setImageDrawable(myFabSrc);
         fab.setOnClickListener(fabClickListener);
 
         //Drawer initialization
@@ -634,7 +626,7 @@ public class MainAndNavigation extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings_log_out) {
             FirebaseAuth. getInstance (). signOut ();
-            Intent intent = new Intent(MainAndNavigation.this, EmailPassowordActivity.class);
+            Intent intent = new Intent(this, EmailPassowordActivity.class);
             startActivity(intent);
             return true;
         }
@@ -714,6 +706,8 @@ public class MainAndNavigation extends AppCompatActivity
 
         } else if (id == R.id.nav_maps) {
             //TODO maps
+            Intent intent = new Intent(MainAndNavigation.this, MapActivity.class);
+            startActivity(intent);
 
         } else {
             String catId = menuCategory.get(id);
