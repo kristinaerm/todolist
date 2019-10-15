@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -88,19 +87,19 @@ public class Database extends SQLiteOpenHelper {
 
     public void addNoCategory(Category category) {
 
-            SQLiteDatabase db = this.getWritableDatabase();
-            ContentValues values = new ContentValues();
-            values.put("name", category.getName());
-            values.put("idIcon", category.getIdIcon());
-            values.put("idUser", category.getIdUser());
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("name", category.getName());
+        values.put("idIcon", category.getIdIcon());
+        values.put("idUser", category.getIdUser());
 
-            db.insert(TABLE_CATEGORY, null, values);
-            db.close();
+        db.insert(TABLE_CATEGORY, null, values);
+        db.close();
 
     }
 
     public void addCategory(Category category) {
-        if (!category.getName().equals(undeletableCategory)){
+        if (!category.getName().equals(undeletableCategory)) {
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put("name", category.getName());
@@ -139,6 +138,19 @@ public class Database extends SQLiteOpenHelper {
         return task;
     }
 
+    public String getCategoryNameById(String id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_CATEGORY, new String[]{
+                        "name"}, "idCategory" + "=?",
+                new String[]{String.valueOf(id)}, null, null, null, null);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        return cursor.getString(0);
+    }
+
     public Category getCategory(String id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -157,7 +169,7 @@ public class Database extends SQLiteOpenHelper {
 
     public LinkedList<Category> getCategorybyIdUser(String idUser) {
         SQLiteDatabase db = this.getReadableDatabase();
-        LinkedList<Category> categoryList=new LinkedList<>();
+        LinkedList<Category> categoryList = new LinkedList<>();
         Cursor cursor = db.query(TABLE_CATEGORY, new String[]{"idCategory",
                         "name", "idIcon", "idUser"}, "idUser" + "=?",
                 new String[]{String.valueOf(idUser)}, null, null, null, null);
@@ -353,8 +365,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public void deleteCategory(Category category) {
-        if(!category.getName().equals(undeletableCategory))
-        {
+        if (!category.getName().equals(undeletableCategory)) {
             SQLiteDatabase db = this.getWritableDatabase();
             db.delete(TABLE_CATEGORY, "idCategory" + " = ?", new String[]{String.valueOf(category.getIdCategory())});
             db.close();

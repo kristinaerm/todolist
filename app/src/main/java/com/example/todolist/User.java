@@ -20,6 +20,7 @@ public class User {
 
 
     }
+
     public User(String login, String pass) {
 
         this.idUser = idUser;

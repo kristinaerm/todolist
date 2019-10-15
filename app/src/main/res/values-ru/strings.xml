@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ToDoList</string>
+    <string name="prompt_password">Пароль (опционально)</string>
+    <string name="action_sign_in">Войдите или зарегистрируйтесь</string>
+    <string name="action_sign_in_short">Войти</string>
+    <string name="error_invalid_email">Этот email недействителен</string>
+    <string name="error_invalid_password">Пароль слишком короткий</string>
+    <string name="error_incorrect_password">Неверный пароль</string>
+    <string name="error_field_required">Поле обязательно для заполнения</string>
+    <string name="permission_rationale">Разрешение доступа к Контактам необходимо для предоставления email</string>
+    <string name="action_settings">Выйти из аккаунта</string>
+    <string name="enter_task">Введите задачу</string>
+    <string name="enter_category">Введите категорию</string>
+    <string name="enter_task_date">Введите дату</string>
+    <string name="enter_task_time">Введите время</string>
+    <string name="enter_task_datetime">Введите дату и время</string>
+    <string name="cancel">Отмена</string>
+    <string name="nav_header_subtitle">Ваш персональный ассистент</string>
+    <string name="expired">Срок истек</string>
+    <string name="today">Сегодня</string>
+    <string name="tomorrow">Завтра</string>
+    <string name="later">Позже</string>
+    <string name="categories">Категории</string>
+    <string name="change">Изменить</string>
+    <string name="add_category">Добавить</string>
+    <string name="language">Язык интерфейса</string>
+    <string name="no_category">Без категории</string>
+    <string name="no_category_in_db">No category</string>
+    <string name="notification_title">Нажмите здесь для просмотра списка задач…</string>
+    <string name="map">Карта</string>
+    <string name="all_tasks">Все задачи</string>
+</resources>

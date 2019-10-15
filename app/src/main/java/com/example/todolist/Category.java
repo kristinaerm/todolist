@@ -1,7 +1,5 @@
 package com.example.todolist;
 
-import android.graphics.Bitmap;
-
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
@@ -15,7 +13,7 @@ public class Category {
 
     }
 
-    public Category(String idCategory,String name, Integer idIcon,  String idUser) {
+    public Category(String idCategory, String name, Integer idIcon, String idUser) {
 
         this.name = name;
         this.idIcon = idIcon;
@@ -24,7 +22,7 @@ public class Category {
 
     }
 
-    public Category(String name, Integer idIcon,  String idUser) {
+    public Category(String name, Integer idIcon, String idUser) {
 
         this.name = name;
         this.idIcon = idIcon;

@@ -3,7 +3,6 @@ package com.example.todolist;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,13 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.content.Context;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.LinkedList;
@@ -26,7 +22,7 @@ import java.util.List;
 public class DataAdapterCategoryList extends RecyclerView.Adapter<DataAdapterCategoryList.ViewHolder> {
     private LayoutInflater inflater;
     private List<Category> categoryList;
-    private List<Category> deletecategoryList=new LinkedList<>();
+    private List<Category> deletecategoryList = new LinkedList<>();
     private Context context;
     private DatabaseReference mDatabase;
     Database db = new Database(context);
@@ -83,6 +79,7 @@ public class DataAdapterCategoryList extends RecyclerView.Adapter<DataAdapterCat
             imageButton = (ImageButton) view.findViewById(R.id.button_delete_category);
         }
     }
+
     //проверяет доступ в интернет
     public boolean CheckConnection() {
 
@@ -95,6 +92,7 @@ public class DataAdapterCategoryList extends RecyclerView.Adapter<DataAdapterCat
             return false;
         }
     }
+
     ValueEventListener valueEventListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -113,7 +111,8 @@ public class DataAdapterCategoryList extends RecyclerView.Adapter<DataAdapterCat
 
         }
     };
-    public List<Category> listDeleteCategory(){
+
+    public List<Category> listDeleteCategory() {
         return deletecategoryList;
     }
 
