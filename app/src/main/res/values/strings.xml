@@ -48,4 +48,11 @@
     <string name="todolist" translatable="false">ToDoList</string>
     <string name="notification_title">Click here to view your ToDoList…</string>
     <string name="map">Map</string>
+
+    <!-- Strings related to EmailPasswordActivity -->
+    <string name="registration">Registration</string>
+    <string name="singin">Sing in</string>
+
+    <!-- Strings related to ChangeActivity -->
+    <string name="titelChange">Change category of notes</string>
 </resources>
