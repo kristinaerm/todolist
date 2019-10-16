@@ -37,6 +37,7 @@
         <activity
             android:name=".ChangeCategoryActivity"
             android:label="@string/title_activity_category"></activity>
+
         <receiver android:name=".AlertReceiver" />
     </application>
 

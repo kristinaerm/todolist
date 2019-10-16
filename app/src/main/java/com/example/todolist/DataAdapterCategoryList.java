@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.LinkedList;
@@ -22,16 +21,18 @@ import java.util.List;
 public class DataAdapterCategoryList extends RecyclerView.Adapter<DataAdapterCategoryList.ViewHolder> {
     private LayoutInflater inflater;
     private List<Category> categoryList;
-    private List<Category> deletecategoryList = new LinkedList<>();
+    private List<Category> deleteCategoryList = new LinkedList<>();
     private Context context;
-    private DatabaseReference mDatabase;
-    Database db = new Database(context);
+    private Database db = new Database(context);
+    private String noCatName;
+    private String noCat;
 
-    public DataAdapterCategoryList(Context context, List<Category> categoryList) {
+    public DataAdapterCategoryList(Context context, List<Category> categoryList, String noCatName, String noCat) {
         this.categoryList = categoryList;
         this.inflater = LayoutInflater.from(context);
         this.context = context;
-
+        this.noCatName = noCatName;
+        this.noCat = noCat;
     }
 
     @Override
@@ -45,18 +46,17 @@ public class DataAdapterCategoryList extends RecyclerView.Adapter<DataAdapterCat
     public void onBindViewHolder(DataAdapterCategoryList.ViewHolder holder, int position) {
         final Category category = categoryList.get(position);
 
-        holder.imageView.setImageResource(category.getIdIcon());
-        holder.nameView.setText(category.getName());
+        holder.imageView.setImageResource(R.drawable.label);
+        holder.nameView.setText((category.getName().equals(noCatName)) ? noCat : category.getName());
         holder.nameView.setTextSize(18);
 
         //обработчик кнопки удаления
         holder.imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deletecategoryList.add(category);
+                deleteCategoryList.add(category);
                 categoryList.remove(category);
                 DataAdapterCategoryList.this.notifyDataSetChanged();
-                //activitySecondMenu.startActivityLearn("",fileName);
 
             }
         });
@@ -86,7 +86,6 @@ public class DataAdapterCategoryList extends RecyclerView.Adapter<DataAdapterCat
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
                 connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-            //we are connected to a network
             return true;
         } else {
             return false;
@@ -108,12 +107,11 @@ public class DataAdapterCategoryList extends RecyclerView.Adapter<DataAdapterCat
 
         @Override
         public void onCancelled(DatabaseError databaseError) {
-
         }
     };
 
     public List<Category> listDeleteCategory() {
-        return deletecategoryList;
+        return deleteCategoryList;
     }
 
 }

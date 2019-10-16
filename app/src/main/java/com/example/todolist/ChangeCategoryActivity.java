@@ -11,12 +11,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -28,13 +25,9 @@ public class ChangeCategoryActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private RecyclerView recyclerView;
     private List<Category> categoryList;
-    private DatabaseReference mDatabase;
-    private FirebaseDatabase mFirebaseInstance;
-    private boolean connected = false;
     private Database db = new Database(this);
-    private Firebase firebase = new Firebase();
     private DataAdapterCategoryList dataAdapterCategoryList;
-    private List<Category> deletecategoryList = new LinkedList<Category>();
+    private List<Category> deleteCategoryList = new LinkedList<Category>();
     private String idUser;
 
     @Override
@@ -44,14 +37,9 @@ public class ChangeCategoryActivity extends AppCompatActivity {
         idUser = getIntent().getStringExtra(MainAndNavigation.ID_USER);
         recyclerView = findViewById(R.id.recyclerView);
 
-
-        // FirebaseDatabase database = FirebaseDatabase.getInstance();
-        // mDatabase = database.getReference();
-
-
         setInitialData();
 
-        dataAdapterCategoryList = new DataAdapterCategoryList(this, categoryList);
+        dataAdapterCategoryList = new DataAdapterCategoryList(this, categoryList, getString(R.string.no_category_in_db), getString(R.string.no_category));
         recyclerView.setAdapter(dataAdapterCategoryList);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -60,8 +48,11 @@ public class ChangeCategoryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // обработчик кнопки крестика
-                deletecategoryList.clear();
+                deleteCategoryList.clear();
                 Intent intent = new Intent(ChangeCategoryActivity.this, MainAndNavigation.class);
+                intent.putExtra(MainAndNavigation.ID_USER, idUser);//передаю в главное активити id пользователя который вошел
+                intent.putExtra(MainAndNavigation.ALL_TASKS, true);//передаю в главное активити хочу все таски
+                intent.putExtra(MainAndNavigation.ID_CATEGORY_TO_SELECT, "");//передаю в главное активити хочу без категрии
                 startActivity(intent);
 
             }
@@ -107,7 +98,6 @@ public class ChangeCategoryActivity extends AppCompatActivity {
 
     public void onClick(View v) {
         switch (v.getId()) {
-
         }
     }
 
@@ -121,29 +111,14 @@ public class ChangeCategoryActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //действия при нажатии на галочку
         if (item.getItemId() == R.id.action_done) {
-            deletecategoryList = dataAdapterCategoryList.listDeleteCategory();
-           /* if (CheckConnection()) {
-                //чтение всех элементов категории из firebase
-                for(int i=0;i<deletecategoryList.size();i++){
-                    String s=deletecategoryList.get(i).getIdCategory();
-                    mDatabase = FirebaseDatabase.getInstance().getReference()
-                            .child("category:").child(deletecategoryList.get(i).getIdCategory().toString());
-                    mDatabase.removeValue();
-                    mDatabase.addListenerForSingleValueEvent(valueEventListener);
-
-                }
-                Toast.makeText(ChangeCategoryActivity.this, "Удалено из firebase", Toast.LENGTH_SHORT).show();
-            } else {*/
-
-            for (int i = 0; i < deletecategoryList.size(); i++) {
-                db.deleteCategory(deletecategoryList.get(i));
-
-                //  }
-
-                Toast.makeText(ChangeCategoryActivity.this, "Удалено из БД", Toast.LENGTH_SHORT).show();
-                // db.addCategory(new Category("Work", R.drawable.done, 99999));
+            deleteCategoryList = dataAdapterCategoryList.listDeleteCategory();
+            for (int i = 0; i < deleteCategoryList.size(); i++) {
+                db.deleteCategory(deleteCategoryList.get(i));
             }
             Intent intent = new Intent(this, MainAndNavigation.class);
+            intent.putExtra(MainAndNavigation.ID_USER, idUser);//передаю в главное активити id пользователя который вошел
+            intent.putExtra(MainAndNavigation.ALL_TASKS, true);//передаю в главное активити хочу все таски
+            intent.putExtra(MainAndNavigation.ID_CATEGORY_TO_SELECT, "");//передаю в главное активити хочу без категрии
             startActivity(intent);
         }
         return true;
@@ -171,11 +146,9 @@ public class ChangeCategoryActivity extends AppCompatActivity {
 
     //проверяет доступ в интернет
     public boolean CheckConnection() {
-
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
                 connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-            //we are connected to a network
             return true;
         } else {
             return false;

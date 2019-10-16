@@ -77,6 +77,7 @@ public class MainAndNavigation extends AppCompatActivity
     private static int countForPendings = 0;
     private LinkedList<AlarmManager> alarmManagers = new LinkedList<>();
     private LinkedList<PendingIntent> pendingIntents = new LinkedList<>();
+    private int countOfAllTasks = 0;
 
     //For saving instance
     private boolean isEnteringText = false;
@@ -124,7 +125,18 @@ public class MainAndNavigation extends AppCompatActivity
     }
 
     private void cancelAlarms() {
+        /*
         for (int i = 0; i < tasks.size(); i++) {
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+            Intent intent = new Intent(this, AlertReceiver.class);
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, i, intent, 0);
+
+            alarmManager.cancel(pendingIntent);
+        }
+        */
+        for (int i = 0; i < countOfAllTasks; i++) {
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
             Intent intent = new Intent(this, AlertReceiver.class);
@@ -181,9 +193,7 @@ public class MainAndNavigation extends AppCompatActivity
         subMenu = category.getSubMenu();
 
         //Toolbar customization
-        String categoryNameToShowInToolbarTitle = all ? getString(R.string.all_tasks) : db.getCategoryNameById(idCategory);
-        categoryNameToShowInToolbarTitle = (categoryNameToShowInToolbarTitle.equals(getString(R.string.no_category_in_db))) ? getString(R.string.no_category) : categoryNameToShowInToolbarTitle;
-        toolbar.setTitle(categoryNameToShowInToolbarTitle);
+        toolbar.setTitle(getNameToShowInToolbar());
 
     }
 
@@ -489,6 +499,12 @@ public class MainAndNavigation extends AppCompatActivity
         return null;
     }
 
+    public String getNameToShowInToolbar() {
+        String catName = all ? getString(R.string.all_tasks) : db.getCategoryNameById(idCategory);
+        catName = (catName.equals(getString(R.string.no_category_in_db))) ? getString(R.string.no_category) : catName;
+        return catName;
+    }
+
     public void sortAndShowTasks(final LinearLayout linearLayout) {
         int previousState = 0;
         int currentState = 0;
@@ -497,8 +513,8 @@ public class MainAndNavigation extends AppCompatActivity
         cancelAlarms();
         tasks.clear();
 
-        String catName = all ? getString(R.string.all_tasks) : db.getCategoryNameById(idCategory);
-        toolbar.setTitle(catName);
+
+        toolbar.setTitle(getNameToShowInToolbar());
 
         categories = db.getCategorybyIdUser(userId);
 
@@ -511,11 +527,21 @@ public class MainAndNavigation extends AppCompatActivity
             idCategory = findNoCategoryId(categories, getString(R.string.no_category_in_db));
         }
 
-        if (all) {
-            for (int i = 0; i < categories.size(); i++) {
-                db.getTasksByCategory(categories.get(i).getIdCategory(), tasks);
+        //Taking all tasks and setting alarms
+        for (int i = 0; i < categories.size(); i++) {
+            db.getTasksByCategory(categories.get(i).getIdCategory(), tasks);
+        }
+        countOfAllTasks = tasks.size();
+        Task current;
+        for (int i = 0; i < tasks.size(); i++) {
+            current = tasks.get(i);
+            try {
+                startAlarm(current.getTimeDateCalendar(), current.toString(), getString(R.string.notification_title));
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
-        } else {
+        }
+        if (!all) {
             tasks = db.getTasksByCategory(idCategory);
         }
 
@@ -570,12 +596,6 @@ public class MainAndNavigation extends AppCompatActivity
                 previousState = currentState;
             }
             linearLayout.addView(checkbox, 0);
-
-            try {
-                startAlarm(curr.getTimeDateCalendar(), curr.toString(), getString(R.string.notification_title));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
         }
 
         try {
@@ -625,7 +645,7 @@ public class MainAndNavigation extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings_log_out) {
-            FirebaseAuth. getInstance (). signOut ();
+            FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(this, EmailPassowordActivity.class);
             startActivity(intent);
             return true;
