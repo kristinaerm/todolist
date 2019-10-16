@@ -16,7 +16,7 @@ public class Task {
     public static final int TODAY = R.string.today;
     public static final int TOMORROW = R.string.tomorrow;
     public static final int LATER = R.string.later;
-    
+
     private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy hh:mm");
 
     private String name;
@@ -110,8 +110,7 @@ public class Task {
             return tasks;
         for (int out = tasks.size() - 1; out >= 1; out--) {
             for (int in = 0; in < out; in++) {
-                if (tasks.get(in).compare(tasks.get(in + 1)) == -1)
-                {
+                if (tasks.get(in).compare(tasks.get(in + 1)) == -1) {
                     bucket = tasks.get(in);
                     tasks.remove(in);
                     tasks.add(in + 1, bucket);
@@ -158,8 +157,8 @@ public class Task {
                     return LATER;
                 } else {
                     if ((today.get(Calendar.HOUR_OF_DAY) > thisDate.get(Calendar.HOUR_OF_DAY))
-                        || ((today.get(Calendar.HOUR_OF_DAY) == thisDate.get(Calendar.HOUR_OF_DAY))
-                            && (today.get(Calendar.MINUTE) > thisDate.get(Calendar.MINUTE)))){
+                            || ((today.get(Calendar.HOUR_OF_DAY) == thisDate.get(Calendar.HOUR_OF_DAY))
+                            && (today.get(Calendar.MINUTE) > thisDate.get(Calendar.MINUTE)))) {
                         return EXPIRED;
                     }
                     return TODAY;

@@ -393,6 +393,7 @@ public class MainAndNavigation extends AppCompatActivity
     private static final String ID_CATEGORY = "com.example.todolist.MainAndNavigation.IdCategory";
     private static final String COUNT_FOR_PENDING = "com.example.todolist.MainAndNavigation.CountForPend";
     private static final String COUNT_FOR_NOTIFICATION = "com.example.todolist.MainAndNavigation.CountForNotif";
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -498,7 +499,7 @@ public class MainAndNavigation extends AppCompatActivity
         return null;
     }
 
-    public String getNameToShowInToolbar(){
+    public String getNameToShowInToolbar() {
         String catName = all ? getString(R.string.all_tasks) : db.getCategoryNameById(idCategory);
         catName = (catName.equals(getString(R.string.no_category_in_db))) ? getString(R.string.no_category) : catName;
         return catName;
@@ -532,15 +533,15 @@ public class MainAndNavigation extends AppCompatActivity
         }
         countOfAllTasks = tasks.size();
         Task current;
-        for (int i=0; i<tasks.size(); i++){
+        for (int i = 0; i < tasks.size(); i++) {
             current = tasks.get(i);
             try {
-                startAlarm(current.getTimeDateCalendar(),current.toString(), getString(R.string.notification_title));
+                startAlarm(current.getTimeDateCalendar(), current.toString(), getString(R.string.notification_title));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
-        if (!all){
+        if (!all) {
             tasks = db.getTasksByCategory(idCategory);
         }
 
@@ -644,7 +645,7 @@ public class MainAndNavigation extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings_log_out) {
-            FirebaseAuth. getInstance (). signOut ();
+            FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(this, EmailPassowordActivity.class);
             startActivity(intent);
             return true;

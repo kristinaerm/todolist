@@ -27,7 +27,7 @@ public class ChangeCategoryActivity extends AppCompatActivity {
     private List<Category> categoryList;
     private Database db = new Database(this);
     private DataAdapterCategoryList dataAdapterCategoryList;
-    private List<Category> deletecategoryList = new LinkedList<Category>();
+    private List<Category> deleteCategoryList = new LinkedList<Category>();
     private String idUser;
 
     @Override
@@ -48,7 +48,7 @@ public class ChangeCategoryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // обработчик кнопки крестика
-                deletecategoryList.clear();
+                deleteCategoryList.clear();
                 Intent intent = new Intent(ChangeCategoryActivity.this, MainAndNavigation.class);
                 intent.putExtra(MainAndNavigation.ID_USER, idUser);//передаю в главное активити id пользователя который вошел
                 intent.putExtra(MainAndNavigation.ALL_TASKS, true);//передаю в главное активити хочу все таски
@@ -98,7 +98,6 @@ public class ChangeCategoryActivity extends AppCompatActivity {
 
     public void onClick(View v) {
         switch (v.getId()) {
-
         }
     }
 
@@ -112,9 +111,9 @@ public class ChangeCategoryActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //действия при нажатии на галочку
         if (item.getItemId() == R.id.action_done) {
-            deletecategoryList = dataAdapterCategoryList.listDeleteCategory();
-            for (int i = 0; i < deletecategoryList.size(); i++) {
-                db.deleteCategory(deletecategoryList.get(i));
+            deleteCategoryList = dataAdapterCategoryList.listDeleteCategory();
+            for (int i = 0; i < deleteCategoryList.size(); i++) {
+                db.deleteCategory(deleteCategoryList.get(i));
             }
             Intent intent = new Intent(this, MainAndNavigation.class);
             intent.putExtra(MainAndNavigation.ID_USER, idUser);//передаю в главное активити id пользователя который вошел

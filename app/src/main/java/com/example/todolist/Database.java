@@ -67,27 +67,19 @@ public class Database extends SQLiteOpenHelper {
 
     public void addTask(Task task) {
         SQLiteDatabase db = this.getWritableDatabase();
+
         ContentValues values = new ContentValues();
         values.put("name", task.getName());
         values.put("idCategory", task.getIdCategory());
         values.put("timeDate", task.getTimeDate());
 
         db.insert(TABLE_TASKS, null, values);
-
-        /*
-        final String MY_QUERY = "SELECT last_insert_rowid()";
-        Cursor cur = db.rawQuery(MY_QUERY, null);
-        cur.moveToFirst();
-        task.setIdTask(cur.getInt(0));
-        cur.close();
-        */
-
         db.close();
     }
 
     public void addNoCategory(Category category) {
-
         SQLiteDatabase db = this.getWritableDatabase();
+
         ContentValues values = new ContentValues();
         values.put("name", category.getName());
         values.put("idIcon", category.getIdIcon());
@@ -95,7 +87,6 @@ public class Database extends SQLiteOpenHelper {
 
         db.insert(TABLE_CATEGORY, null, values);
         db.close();
-
     }
 
     public void addCategory(Category category) {

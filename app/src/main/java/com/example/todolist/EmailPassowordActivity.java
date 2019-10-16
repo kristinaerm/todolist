@@ -45,8 +45,6 @@ public class EmailPassowordActivity extends AppCompatActivity implements View.On
 
                 } else {
                     // User is signed out
-
-
                 }
 
             }
@@ -65,7 +63,6 @@ public class EmailPassowordActivity extends AppCompatActivity implements View.On
         EditText editEmail = (EditText) findViewById(R.id.et_email);
         EditText editPass = (EditText) findViewById(R.id.et_password);
         if (view.getId() == R.id.btn_sign_in) {
-            //    User user = db.getUser(editEmail.getText().toString());
 
             if (!isEmpty(editEmail) && !isEmpty(editPass)) {
                 signin(ETemail.getText().toString(), ETpassword.getText().toString());
@@ -130,8 +127,6 @@ public class EmailPassowordActivity extends AppCompatActivity implements View.On
                     intent.putExtra(MainAndNavigation.ALL_TASKS, true);//передаю в главное активити хочу все таски
                     intent.putExtra(MainAndNavigation.ID_CATEGORY_TO_SELECT, "");//передаю в главное активити хочу без категрии
                     startActivity(intent);
-
-
                 } else
                     Toast.makeText(EmailPassowordActivity.this, "Авторизация провалена", Toast.LENGTH_SHORT).show();
             }
@@ -155,7 +150,6 @@ public class EmailPassowordActivity extends AppCompatActivity implements View.On
     private boolean isEmpty(EditText etText) {
         if (etText.getText().toString().trim().length() > 0)
             return false;
-
         return true;
     }
 
@@ -166,5 +160,4 @@ public class EmailPassowordActivity extends AppCompatActivity implements View.On
         homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(homeIntent);
     }
-
 }

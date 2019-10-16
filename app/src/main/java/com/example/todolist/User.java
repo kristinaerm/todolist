@@ -17,17 +17,12 @@ public class User {
         this.idUser = idUser;
         this.login = login;
         this.pass = pass;
-
-
     }
 
     public User(String login, String pass) {
 
-        this.idUser = idUser;
         this.login = login;
         this.pass = pass;
-
-
     }
 
     public String getLogin() {
