@@ -595,13 +595,6 @@ public class MainAndNavigation extends AppCompatActivity
                 previousState = currentState;
             }
             linearLayout.addView(checkbox, 0);
-/*
-            try {
-                startAlarm(curr.getTimeDateCalendar(), curr.toString(), getString(R.string.notification_title));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            */
         }
 
         try {

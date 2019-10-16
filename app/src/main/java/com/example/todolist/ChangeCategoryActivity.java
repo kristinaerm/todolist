@@ -14,8 +14,6 @@ import android.view.View;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -27,11 +25,7 @@ public class ChangeCategoryActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private RecyclerView recyclerView;
     private List<Category> categoryList;
-    private DatabaseReference mDatabase;
-    private FirebaseDatabase mFirebaseInstance;
-    private boolean connected = false;
     private Database db = new Database(this);
-    private Firebase firebase = new Firebase();
     private DataAdapterCategoryList dataAdapterCategoryList;
     private List<Category> deletecategoryList = new LinkedList<Category>();
     private String idUser;
@@ -43,14 +37,9 @@ public class ChangeCategoryActivity extends AppCompatActivity {
         idUser = getIntent().getStringExtra(MainAndNavigation.ID_USER);
         recyclerView = findViewById(R.id.recyclerView);
 
-
-        // FirebaseDatabase database = FirebaseDatabase.getInstance();
-        // mDatabase = database.getReference();
-
-
         setInitialData();
 
-        dataAdapterCategoryList = new DataAdapterCategoryList(this, categoryList);
+        dataAdapterCategoryList = new DataAdapterCategoryList(this, categoryList, getString(R.string.no_category_in_db), getString(R.string.no_category));
         recyclerView.setAdapter(dataAdapterCategoryList);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
