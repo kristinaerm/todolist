@@ -103,7 +103,7 @@ public class MainAndNavigation extends AppCompatActivity
         return countForPendings;
     }
 
-    public static void IncrementCountForPendings() {
+    public static void incrementCountForPendings() {
         countForPendings++;
     }
 
@@ -117,25 +117,19 @@ public class MainAndNavigation extends AppCompatActivity
         intent.putExtra(AlertReceiver.TITLE, title);
         intent.putExtra(AlertReceiver.TEXT, text);
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, getCountForPendings(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                this,
+                getCountForPendings(),
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
         pendingIntents.add(pendingIntent);
-        IncrementCountForPendings();
+        incrementCountForPendings();
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
     }
 
     private void cancelAlarms() {
-        /*
-        for (int i = 0; i < tasks.size(); i++) {
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-            Intent intent = new Intent(this, AlertReceiver.class);
-
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, i, intent, 0);
-
-            alarmManager.cancel(pendingIntent);
-        }
-        */
         for (int i = 0; i < countOfAllTasks; i++) {
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
@@ -171,9 +165,6 @@ public class MainAndNavigation extends AppCompatActivity
 
         //FAB customization
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        //Drawable myFabSrc = getResources().getDrawable(android.R.drawable.ic_input_add);
-        //myFabSrc.setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
-        //fab.setImageDrawable(myFabSrc);
         fab.setOnClickListener(fabClickListener);
 
         //Drawer initialization
@@ -469,10 +460,13 @@ public class MainAndNavigation extends AppCompatActivity
         if (subMenu.size() > 2) {
             clearMenu(subMenu, menuCategory);
         }
+
         for (int i = 0; i < categories.size(); i++) {
             menuCategory.put(i, categories.get(i).getIdCategory());
-            String categoryNameToShow = (categories.get(i).getName().equals(getString(R.string.no_category_in_db))) ? getString(R.string.no_category) : categories.get(i).getName();
-            subMenu.add(R.id.nav_group_categories, i, Menu.NONE, categoryNameToShow).setIcon(getResources().getDrawable(R.drawable.label));
+            String categoryNameToShow = (categories.get(i).getName().equals(getString(R.string.no_category_in_db))) ?
+                    getString(R.string.no_category) : categories.get(i).getName();
+            subMenu.add(R.id.nav_group_categories, i, Menu.NONE,
+                    categoryNameToShow).setIcon(getResources().getDrawable(R.drawable.label));
         }
 
         return true;

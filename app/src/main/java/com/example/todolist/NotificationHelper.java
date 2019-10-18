@@ -45,7 +45,8 @@ public class NotificationHelper extends ContextWrapper {
 
     public NotificationCompat.Builder getChannelTaskNotification(String title, String text) {
         Intent mainIntent = new Intent(this, EmailPassowordActivity.class);
-        PendingIntent pendingMainIntent = PendingIntent.getActivity(this, 1, mainIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingMainIntent = PendingIntent.getActivity(
+                this, 1, mainIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         return new NotificationCompat.Builder(getApplicationContext(), CHANNEL1ID)
                 .setContentTitle(title)
                 .setContentText(text)

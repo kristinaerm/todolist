@@ -65,7 +65,7 @@ public class EmailPassowordActivity extends AppCompatActivity implements View.On
         if (view.getId() == R.id.btn_sign_in) {
 
             if (!isEmpty(editEmail) && !isEmpty(editPass)) {
-                signin(ETemail.getText().toString(), ETpassword.getText().toString());
+                signIn(ETemail.getText().toString(), ETpassword.getText().toString());
             } else {
                 if (isEmpty(editEmail)) {
                     editPass.getBackground().mutate().setColorFilter(getResources().getColor(android.R.color.black), PorterDuff.Mode.SRC_ATOP);
@@ -110,28 +110,25 @@ public class EmailPassowordActivity extends AppCompatActivity implements View.On
         }
     }
 
-    public void signin(String email, String password) {
-        EditText editEmail = (EditText) findViewById(R.id.et_email);
-        EditText editPass = (EditText) findViewById(R.id.et_password);
-
+    public void signIn (String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
 
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-
                 if (task.isSuccessful()) {
-
-                    Toast.makeText(EmailPassowordActivity.this, "Авторизаци успешна", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(EmailPassowordActivity.this, MainAndNavigation.class);
-                    intent.putExtra(MainAndNavigation.ID_USER, user.getUid());//передаю в главное активити id пользователя который вошел
-                    intent.putExtra(MainAndNavigation.ALL_TASKS, true);//передаю в главное активити хочу все таски
-                    intent.putExtra(MainAndNavigation.ID_CATEGORY_TO_SELECT, "");//передаю в главное активити хочу без категрии
+                    Toast.makeText(EmailPassowordActivity.this,
+                            getString(R.string.log_in_successfull), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(EmailPassowordActivity.this,
+                            MainAndNavigation.class);
+                    intent.putExtra(MainAndNavigation.ID_USER, user.getUid());
+                    intent.putExtra(MainAndNavigation.ALL_TASKS, true);
+                    intent.putExtra(MainAndNavigation.ID_CATEGORY_TO_SELECT, "");
                     startActivity(intent);
                 } else
-                    Toast.makeText(EmailPassowordActivity.this, "Авторизация провалена", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EmailPassowordActivity.this,
+                            getString(R.string.log_in_failed), Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
     public void registration(String email, String password) {
@@ -140,9 +137,9 @@ public class EmailPassowordActivity extends AppCompatActivity implements View.On
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(EmailPassowordActivity.this, "Регистрация успешна", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(EmailPassowordActivity.this, getString(R.string.reg_success), Toast.LENGTH_SHORT).show();
                         } else
-                            Toast.makeText(EmailPassowordActivity.this, "Регистрация провалена", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(EmailPassowordActivity.this, getString(R.string.reg_fail), Toast.LENGTH_SHORT).show();
                     }
                 });
     }

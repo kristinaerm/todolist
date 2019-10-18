@@ -32,5 +32,9 @@
     <string name="all_tasks">Все задачи</string>
     <string name="registration">Зарегистрироваться</string>
     <string name="title_change">Изменить список категорий</string>
-    <string name="title_activity_category" translatable="false">Cписок категорий</string>
+    <string name="title_activity_category">Cписок категорий</string>
+    <string name="reg_success">Регистрация успешна</string>
+    <string name="reg_fail">Регистрация провалена</string>
+    <string name="log_in_successfull">Авторизация успешна</string>
+    <string name="log_in_failed">Авторизация провалена</string>
 </resources>

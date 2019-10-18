@@ -53,4 +53,8 @@
     <!-- Strings related to ChangeActivity -->
     <string name="registration">Sign up</string>
     <string name="title_change">Change list of categories</string>
+    <string name="reg_success">Successfull registration</string>
+    <string name="reg_fail">Registration failed</string>
+    <string name="log_in_successfull">Authorization successfull</string>
+    <string name="log_in_failed">Autorization failed</string>
 </resources>

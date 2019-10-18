@@ -20,10 +20,8 @@ public class ExampleUnitTest {
         categoriesList.add(new Category("1", "NotRight1", 1, "1"));
         categoriesList.add(new Category("2", noCategoryName, 1, "1"));
         categoriesList.add(new Category("3", "NotRight3", 1, "1"));
-
         // act
         String res = MainAndNavigation.findNoCategoryId(categoriesList, noCategoryName);
-
         // assert
         assertEquals("2", res);
     }
